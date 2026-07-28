@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.puce.labloan.services.PrestamoServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-07-27T00:41:31.440Z" hostname="KEVINs-MBP.lan" time="0.567">
+  <properties/>
+  <testcase name="cancelar elimina el prestamo y libera el equipo cuando es del dueno y esta pendiente()" classname="com.puce.labloan.services.PrestamoServiceTest" time="0.081"/>
+  <testcase name="solicitar crea el prestamo y marca el equipo como prestado cuando esta disponible()" classname="com.puce.labloan.services.PrestamoServiceTest" time="0.141"/>
+  <testcase name="cancelar lanza ForbiddenOperationException si el prestamo ya no esta pendiente()" classname="com.puce.labloan.services.PrestamoServiceTest" time="0.081"/>
+  <testcase name="cancelar lanza ForbiddenOperationException si el prestamo no pertenece al usuario()" classname="com.puce.labloan.services.PrestamoServiceTest" time="0.069"/>
+  <testcase name="solicitar lanza EquipoNoDisponibleException si el equipo ya esta prestado()" classname="com.puce.labloan.services.PrestamoServiceTest" time="0.067"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
