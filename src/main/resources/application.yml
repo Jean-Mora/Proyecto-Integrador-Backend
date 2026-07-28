@@ -1,11 +1,11 @@
 spring:
   application:
-    name: labloan
+    name: sigpel
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:labloan}
-    username: ${DB_USERNAME:labloan}
-    password: ${DB_PASSWORD:labloan}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sigpel}
+    username: ${DB_USERNAME:sigpel}
+    password: ${DB_PASSWORD:sigpel}
 
   jpa:
     hibernate:
@@ -29,4 +29,4 @@ server:
 logging:
   level:
     org.springframework.security: INFO
-    com.puce.labloan: DEBUG
+    com.puce.sigpel: DEBUG

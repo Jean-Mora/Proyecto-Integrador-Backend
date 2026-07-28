@@ -1,7 +1,6 @@
-# LabLoan — Backend
+# Sigpel — Backend
 
-Backend del proyecto integrador **Sigpel
-** (préstamo de equipos de laboratorio),
+Backend del proyecto integrador **Sigpel** (préstamo de equipos de laboratorio),
 construido en **Kotlin + Spring Boot 4**, con autenticación **AWS Cognito (JWT)**
 y base de datos **PostgreSQL**.
 

@@ -4,7 +4,7 @@
 Aceptado
 
 ## Contexto
-El backend de LabLoan necesita exponer una API REST sobre una base de datos
+El backend de Sigpel necesita exponer una API REST sobre una base de datos
 relacional, con reglas de negocio (disponibilidad de equipos, quien puede
 aprobar/cancelar un prestamo) y validaciones de seguridad (rol y propiedad).
 Se evaluo poner la logica directamente en los controllers (mas rapido de
