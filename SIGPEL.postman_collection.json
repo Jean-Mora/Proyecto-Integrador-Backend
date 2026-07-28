@@ -1,0 +1,321 @@
+{
+  "info": {
+    "name": "SIGPEL API - Demo",
+    "description": "Coleccion de demo para la API de SIGPEL (Sistema de Gestion de Prestamos de Equipos).\n\nAutenticacion: la API valida JWT emitidos por AWS Cognito (Bearer token). Antes de correr los requests protegidos, obten un id_token/access_token de Cognito (con el claim `cognito:groups` = ENCARGADO o ESTUDIANTE) y pegalo en la variable de coleccion `jwt_token`.\n\nEndpoints publicos (no requieren token): GET /categorias, GET /equipos, GET /equipos/{id}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b6f6a0b0-5b40-4b7f-9a4a-sigpel-demo-0001"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080", "type": "string" },
+    { "key": "jwt_token", "value": "", "type": "string" },
+    { "key": "categoria_id", "value": "1", "type": "string" },
+    { "key": "equipo_id", "value": "1", "type": "string" },
+    { "key": "prestamo_id", "value": "1", "type": "string" },
+    { "key": "incidencia_id", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Categorias",
+      "item": [
+        {
+          "name": "Listar categorias (publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": ["{{base_url}}"],
+              "path": ["categorias"]
+            }
+          }
+        },
+        {
+          "name": "Crear categoria (ENCARGADO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Proyectores\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": ["{{base_url}}"],
+              "path": ["categorias"]
+            }
+          }
+        },
+        {
+          "name": "Editar categoria (ENCARGADO)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Proyectores HD\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias/{{categoria_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["categorias", "{{categoria_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar categoria (ENCARGADO)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categorias/{{categoria_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["categorias", "{{categoria_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Equipos",
+      "item": [
+        {
+          "name": "Listar equipos (publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{base_url}}/equipos",
+              "host": ["{{base_url}}"],
+              "path": ["equipos"]
+            }
+          }
+        },
+        {
+          "name": "Listar equipos por estado (publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{base_url}}/equipos?estado=DISPONIBLE",
+              "host": ["{{base_url}}"],
+              "path": ["equipos"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "DISPONIBLE",
+                  "description": "DISPONIBLE | PRESTADO | MANTENIMIENTO"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener equipo por id (publico)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["equipos", "{{equipo_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear equipo (ENCARGADO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": {{categoria_id}},\n  \"nombre\": \"Proyector Epson X200\",\n  \"descripcion\": \"Proyector para aulas, incluye cable HDMI\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/equipos",
+              "host": ["{{base_url}}"],
+              "path": ["equipos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar estado de equipo (ENCARGADO)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"MANTENIMIENTO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["equipos", "{{equipo_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar equipo (ENCARGADO)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["equipos", "{{equipo_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prestamos",
+      "item": [
+        {
+          "name": "Solicitar prestamo (ESTUDIANTE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipoId\": {{equipo_id}},\n  \"fechaDevolucionEstimada\": \"2026-08-04T17:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/prestamos",
+              "host": ["{{base_url}}"],
+              "path": ["prestamos"]
+            }
+          }
+        },
+        {
+          "name": "Mis prestamos (ESTUDIANTE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/prestamos/me",
+              "host": ["{{base_url}}"],
+              "path": ["prestamos", "me"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado de prestamo (ENCARGADO)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"APROBADO\",\n  \"comentario\": \"Entregado en bodega 2\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["prestamos", "{{prestamo_id}}"]
+            },
+            "description": "Valores validos para estado: PENDIENTE | APROBADO | RECHAZADO | DEVUELTO"
+          }
+        },
+        {
+          "name": "Cancelar prestamo (ESTUDIANTE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["prestamos", "{{prestamo_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Incidencias",
+      "item": [
+        {
+          "name": "Registrar incidencia (ENCARGADO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prestamoId\": {{prestamo_id}},\n  \"tipo\": \"DANIO\",\n  \"descripcion\": \"Pantalla del proyector con manchas\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/incidencias",
+              "host": ["{{base_url}}"],
+              "path": ["incidencias"]
+            },
+            "description": "Valores validos para tipo: DANIO | PERDIDA | RETRASO"
+          }
+        },
+        {
+          "name": "Obtener incidencia (ENCARGADO)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["incidencias", "{{incidencia_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar incidencia (ENCARGADO)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prestamoId\": {{prestamo_id}},\n  \"tipo\": \"RETRASO\",\n  \"descripcion\": \"Entrega con 2 dias de retraso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["incidencias", "{{incidencia_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar incidencia (ENCARGADO)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["incidencias", "{{incidencia_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
