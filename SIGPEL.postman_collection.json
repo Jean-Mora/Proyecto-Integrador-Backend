@@ -1,24 +1,12 @@
 {
   "info": {
+    "_postman_id": "0d9289ea-acd5-4d42-b8dd-35c1bf89a47e",
     "name": "SIGPEL API - Demo",
     "description": "Coleccion de demo para la API de SIGPEL (Sistema de Gestion de Prestamos de Equipos).\n\nAutenticacion: la API valida JWT emitidos por AWS Cognito (Bearer token). Antes de correr los requests protegidos, obten un id_token/access_token de Cognito (con el claim `cognito:groups` = ENCARGADO o ESTUDIANTE) y pegalo en la variable de coleccion `jwt_token`.\n\nEndpoints publicos (no requieren token): GET /categorias, GET /equipos, GET /equipos/{id}.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "b6f6a0b0-5b40-4b7f-9a4a-sigpel-demo-0001"
+    "_exporter_id": "54540741",
+    "_collection_link": "https://go.postman.co/collection/54540741-0d9289ea-acd5-4d42-b8dd-35c1bf89a47e?source=collection_link"
   },
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      { "key": "token", "value": "{{jwt_token}}", "type": "string" }
-    ]
-  },
-  "variable": [
-    { "key": "base_url", "value": "http://localhost:8080", "type": "string" },
-    { "key": "jwt_token", "value": "", "type": "string" },
-    { "key": "categoria_id", "value": "1", "type": "string" },
-    { "key": "equipo_id", "value": "1", "type": "string" },
-    { "key": "prestamo_id", "value": "1", "type": "string" },
-    { "key": "incidencia_id", "value": "1", "type": "string" }
-  ],
   "item": [
     {
       "name": "Categorias",
@@ -26,63 +14,123 @@
         {
           "name": "Listar categorias (publico)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "auth": { "type": "noauth" },
             "url": {
               "raw": "{{base_url}}/categorias",
-              "host": ["{{base_url}}"],
-              "path": ["categorias"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Crear categoria (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Proyectores\"\n}"
+              "raw": "{\n  \"nombre\": \"\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/categorias",
-              "host": ["{{base_url}}"],
-              "path": ["categorias"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Editar categoria (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Proyectores HD\"\n}"
+              "raw": "{\n  \"nombre\": \"Laptops\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/categorias/{{categoria_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["categorias", "{{categoria_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoria_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Eliminar categoria (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{base_url}}/categorias/{{categoria_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["categorias", "{{categoria_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoria_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -92,73 +140,126 @@
         {
           "name": "Listar equipos (publico)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "auth": { "type": "noauth" },
             "url": {
               "raw": "{{base_url}}/equipos",
-              "host": ["{{base_url}}"],
-              "path": ["equipos"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Listar equipos por estado (publico)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "auth": { "type": "noauth" },
             "url": {
-              "raw": "{{base_url}}/equipos?estado=DISPONIBLE",
-              "host": ["{{base_url}}"],
-              "path": ["equipos"],
+              "raw": "{{base_url}}/equipos?estado=MANTENIMIENTO",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos"
+              ],
               "query": [
                 {
                   "key": "estado",
-                  "value": "DISPONIBLE",
+                  "value": "MANTENIMIENTO",
                   "description": "DISPONIBLE | PRESTADO | MANTENIMIENTO"
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Obtener equipo por id (publico)",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "auth": { "type": "noauth" },
             "url": {
               "raw": "{{base_url}}/equipos/{{equipo_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["equipos", "{{equipo_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos",
+                "{{equipo_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Crear equipo (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoriaId\": {{categoria_id}},\n  \"nombre\": \"Proyector Epson X200\",\n  \"descripcion\": \"Proyector para aulas, incluye cable HDMI\"\n}"
+              "raw": "{\n  \"categoriaId\": {{categoria_id}},\n  \"nombre\": \"\",\n  \"descripcion\": \"Proyector para aulas, incluye cable HDMI\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/equipos",
-              "host": ["{{base_url}}"],
-              "path": ["equipos"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Actualizar estado de equipo (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -166,22 +267,44 @@
             },
             "url": {
               "raw": "{{base_url}}/equipos/{{equipo_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["equipos", "{{equipo_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos",
+                "{{equipo_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Eliminar equipo (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{base_url}}/equipos/{{equipo_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["equipos", "{{equipo_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipos",
+                "{{equipo_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -191,9 +314,22 @@
         {
           "name": "Solicitar prestamo (ESTUDIANTE)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -201,29 +337,63 @@
             },
             "url": {
               "raw": "{{base_url}}/prestamos",
-              "host": ["{{base_url}}"],
-              "path": ["prestamos"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "prestamos"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Mis prestamos (ESTUDIANTE)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/prestamos/me",
-              "host": ["{{base_url}}"],
-              "path": ["prestamos", "me"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "prestamos",
+                "me"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Cambiar estado de prestamo (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -231,23 +401,45 @@
             },
             "url": {
               "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["prestamos", "{{prestamo_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "prestamos",
+                "{{prestamo_id}}"
+              ]
             },
             "description": "Valores validos para estado: PENDIENTE | APROBADO | RECHAZADO | DEVUELTO"
-          }
+          },
+          "response": []
         },
         {
           "name": "Cancelar prestamo (ESTUDIANTE)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["prestamos", "{{prestamo_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "prestamos",
+                "{{prestamo_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -257,9 +449,22 @@
         {
           "name": "Registrar incidencia (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -267,30 +472,64 @@
             },
             "url": {
               "raw": "{{base_url}}/incidencias",
-              "host": ["{{base_url}}"],
-              "path": ["incidencias"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidencias"
+              ]
             },
             "description": "Valores validos para tipo: DANIO | PERDIDA | RETRASO"
-          }
+          },
+          "response": []
         },
         {
           "name": "Obtener incidencia (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["incidencias", "{{incidencia_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidencias",
+                "{{incidencia_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Actualizar incidencia (ENCARGADO)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -298,10 +537,16 @@
             },
             "url": {
               "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["incidencias", "{{incidencia_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidencias",
+                "{{incidencia_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Eliminar incidencia (ENCARGADO)",
@@ -310,12 +555,234 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["incidencias", "{{incidencia_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidencias",
+                "{{incidencia_id}}"
+              ]
             }
-          }
+          },
+          "response": []
         }
       ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login ENCARGADO",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set(\"token_encargado\", response.AuthenticationResult.IdToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1",
+                "type": "text"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"3ans0himg191rg5prihuet9eg0\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"jpmoras@puce.edu.ec\",\n    \"PASSWORD\": \"Puce2026!\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://cognito-idp.us-east-1.amazonaws.com/",
+              "protocol": "https",
+              "host": [
+                "cognito-idp",
+                "us-east-1",
+                "amazonaws",
+                "com"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login ESTUDIANTE",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set(\"token_estudiante\", response.AuthenticationResult.IdToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1",
+                "type": "text"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"3ans0himg191rg5prihuet9eg0\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"jestudiante@puce.edu.ec\",\n    \"PASSWORD\": \"Estudiante2026!\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://cognito-idp.us-east-1.amazonaws.com/",
+              "protocol": "https",
+              "host": [
+                "cognito-idp",
+                "us-east-1",
+                "amazonaws",
+                "com"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "tokenName",
+        "value": "Admin",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    },
+    {
+      "key": "categoria_id",
+      "value": "1"
+    },
+    {
+      "key": "equipo_id",
+      "value": "1"
+    },
+    {
+      "key": "prestamo_id",
+      "value": "1"
+    },
+    {
+      "key": "incidencia_id",
+      "value": "1"
+    },
+    {
+      "key": "token_estudiante",
+      "value": "eyJraWQiOiJNb3BOazNiQmdleHZIRWQ3WjNLcWM2dmF2SGY1dUxKV08vVkh5QzRyRGVZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1NGY4NzQ0OC1mMDYxLTcwMWYtZDJlYy1iYmY4NTRkYmY3MmYiLCJjb2duaXRvOmdyb3VwcyI6WyJFU1RVRElBTlRFIl0sImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczovL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL3VzLWVhc3QtMV9mSGM0d0EyY0YiLCJjb2duaXRvOnVzZXJuYW1lIjoiNTRmODc0NDgtZjA2MS03MDFmLWQyZWMtYmJmODU0ZGJmNzJmIiwib3JpZ2luX2p0aSI6IjRkYTYwYTE2LTcxMGUtNDQ5Yy1hODY3LTQ0MDJhNTRhYzgzNSIsImF1ZCI6IjNhbnMwaGltZzE5MXJnNXByaWh1ZXQ5ZWcwIiwiZXZlbnRfaWQiOiJlNDY2NDUyYi1iMDdjLTQ2MzctOGZmMS03MWJkYTU4ZWNiOWMiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc4NTI3ODM5NSwiZXhwIjoxNzg1MjgxOTk1LCJpYXQiOjE3ODUyNzgzOTUsImp0aSI6ImRiYTFlM2Q0LTUxZjYtNDgyNC05MDYxLTI5MzIxZmE4N2RmZCIsImVtYWlsIjoiamVzdHVkaWFudGVAcHVjZS5lZHUuZWMifQ.d5Lsy5yc7LFYxGHJakwf-6RhVGFc5y2VMjQs5Dqo5qx-up_KWjT5kC6ZGlWw4DTscwFOrWaQkj6-plcYNIPkIgtbKTtM_bm7Oiax1tNqmS9eYfUmJmXreNG0esKUoTm3LcviLQcuM50BxiXUyTafub1yOSh97nK6umAQw_3kscpS-vqdwF8FMBmXcP1VU4h6fgAkX1JLqjPxpWRdWLNJrFO95Qbln1VjGBPx6RTD8Vn2KUMkuCau4_yvOUGf1w5EMR6Mu8sYz6VG_8AsmdORMUOFu-ZOJ_U1IN5790tBSrVhH8MkpmHizhCgevQVV7DSQh0o2mR-6aG2AKjVX20kTQ"
+    },
+    {
+      "key": "token_encargado",
+      "value": "eyJraWQiOiJNb3BOazNiQmdleHZIRWQ3WjNLcWM2dmF2SGY1dUxKV08vVkh5QzRyRGVZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI3NDk4MjQzOC03MDMxLTcwNzktY2E3ZC05NzU3ZWEwNTdkYjYiLCJjb2duaXRvOmdyb3VwcyI6WyJBRE1JTklTVFJBRE9SIl0sImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczovL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL3VzLWVhc3QtMV9mSGM0d0EyY0YiLCJjb2duaXRvOnVzZXJuYW1lIjoiNzQ5ODI0MzgtNzAzMS03MDc5LWNhN2QtOTc1N2VhMDU3ZGI2Iiwib3JpZ2luX2p0aSI6IjIzZTAzYzMwLTRhMDgtNGM3NC05ZjA1LWEwYjUyNjY4ZjMyNyIsImF1ZCI6IjNhbnMwaGltZzE5MXJnNXByaWh1ZXQ5ZWcwIiwiZXZlbnRfaWQiOiI5MTY2M2VlOS0wZjc4LTQ1MDEtYWM0NC1iYzJjNTM5OTM3ZGIiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc4NTI3ODQwMSwiZXhwIjoxNzg1MjgyMDAxLCJpYXQiOjE3ODUyNzg0MDEsImp0aSI6ImIzMjkzYTFlLWE1N2ItNGM1Zi05Y2U4LTI3ZWQ0ZDgzZWY1YSIsImVtYWlsIjoianBtb3Jhc0BwdWNlLmVkdS5lYyJ9.PmEV0RJZjCEAevCbgfpLbmOOse2OjhbRXhBW0O2M_7chKGQVsTOJVE0t-TmhlXhTzhGRkn26z7nTK6rOr-WH-6b0t0BfYebbQHgyB0hjRq_XLktnlT-WPF5ed85ABalqnUduqldJoZw8vjs_dh5qOwiG_eeitqDL0X8Ff4kYO3_Bj5Db-4ymjl9QfU2u2bOiMCl4ieFrrYLLzV0IjSiN-bUm-fburtVVYicvMO73U187CLE4pNVzJCeiOMA6Lm_aPm2mrb4AlgixESxXV82Gxl6LnLm4C7bBhUT1HYeOhJn9rH8g5FzHUvT7-rrUc9-x3QsTtG3Px2UHOkwqFGAiUQ"
     }
   ]
 }
