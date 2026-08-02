@@ -28,4 +28,8 @@ class CategoriaEquipoService(
         categoria.nombre = request.nombre
         return categoriaEquipoRepository.save(categoria)
     }
+
+    fun eliminar(id: Long) {
+        categoriaEquipoRepository.delete(obtener(id))
+    }
 }
