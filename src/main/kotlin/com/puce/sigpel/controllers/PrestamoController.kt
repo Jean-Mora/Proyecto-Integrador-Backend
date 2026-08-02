@@ -33,7 +33,7 @@ class PrestamoController(
     fun misPrestamos(): List<PrestamoResponse> =
         prestamoService.listarMios().map { it.toResponse() }
 
-    /** Aprobar o rechazar: el nuevo estado va en el body. */
+    /** Aprobar, rechazar o marcar como devuelto: el nuevo estado va en el body. */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ENCARGADO')")
     fun cambiarEstado(@PathVariable id: Long, @Valid @RequestBody request: PrestamoEstadoRequest): PrestamoResponse =

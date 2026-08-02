@@ -11,6 +11,7 @@ import com.puce.sigpel.exceptions.ResourceNotFoundException
 import com.puce.sigpel.repositories.PrestamoRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 @Transactional
@@ -53,7 +54,7 @@ class PrestamoService(
         return prestamoRepository.save(prestamo)
     }
 
-    /** ENCARGADO aprueba o rechaza un prestamo pendiente. */
+    /** ENCARGADO aprueba, rechaza o marca como devuelto un prestamo. */
     fun cambiarEstado(id: Long, request: PrestamoEstadoRequest): Prestamo {
         val prestamo = obtener(id)
         prestamo.estado = request.estado
@@ -61,6 +62,10 @@ class PrestamoService(
 
         when (request.estado) {
             EstadoPrestamo.RECHAZADO -> prestamo.equipo.estado = EstadoEquipo.DISPONIBLE
+            EstadoPrestamo.DEVUELTO -> {
+                prestamo.equipo.estado = EstadoEquipo.DISPONIBLE
+                prestamo.fechaDevolucionReal = Instant.now()
+            }
             else -> Unit
         }
         return prestamoRepository.save(prestamo)
