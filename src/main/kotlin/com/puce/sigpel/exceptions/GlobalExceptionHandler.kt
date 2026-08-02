@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 /**
- * Traduce las excepciones de negocio a respuestas HTTP consistentes.
+ * Traduce las excepciones de negocio a respuestas HTTP consistentes:
+ * 400 validaciones, 403 rol/propiedad incorrectos, 404 recurso inexistente,
+ * 409 conflictos de estado o de concurrencia (optimistic locking).
  * El 401 (sin token o token invalido) lo maneja directamente Spring Security
- * antes de llegar aqui; el 403 (rol incorrecto) se traduce aqui a un cuerpo
- * JSON legible en vez del error por defecto de Spring Security.
+ * antes de llegar aqui.
  */
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -28,6 +29,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(
         EquipoNoDisponibleException::class,
+        IncidenciaYaRegistradaException::class,
         ObjectOptimisticLockingFailureException::class
     )
     fun handleConflict(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =

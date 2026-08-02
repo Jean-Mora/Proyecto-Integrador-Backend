@@ -1,5 +1,6 @@
 package com.puce.sigpel.entities
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.Instant
 
@@ -43,5 +45,9 @@ class Prestamo(
     var estado: EstadoPrestamo = EstadoPrestamo.PENDIENTE,
 
     @Column(length = 255)
-    var comentario: String? = null
+    var comentario: String? = null,
+
+    // Relacion 1:1 con incidencias (un prestamo tiene como maximo una incidencia).
+    @OneToOne(mappedBy = "prestamo", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var incidencia: Incidencia? = null
 )
