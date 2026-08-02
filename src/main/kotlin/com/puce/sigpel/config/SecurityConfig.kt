@@ -2,6 +2,7 @@ package com.puce.sigpel.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -28,6 +29,8 @@ class SecurityConfig {
             csrf { disable() }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
             authorizeHttpRequests {
+                // Catalogo publico: cualquiera puede consultar categorias.
+                authorize(HttpMethod.GET, "/categorias", permitAll)
                 authorize(anyRequest, authenticated)
             }
             oauth2ResourceServer {

@@ -7,6 +7,7 @@ import com.puce.sigpel.services.CategoriaEquipoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController
 class CategoriaEquipoController(
     private val categoriaEquipoService: CategoriaEquipoService
 ) {
+    @GetMapping
+    fun listar(): List<CategoriaEquipoResponse> =
+        categoriaEquipoService.listar().map { it.toResponse() }
+
     @PostMapping
     @PreAuthorize("hasRole('ENCARGADO')")
     @ResponseStatus(HttpStatus.CREATED)

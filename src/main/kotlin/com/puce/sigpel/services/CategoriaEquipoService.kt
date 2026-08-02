@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional
 class CategoriaEquipoService(
     private val categoriaEquipoRepository: CategoriaEquipoRepository
 ) {
+    @Transactional(readOnly = true)
+    fun listar(): List<CategoriaEquipo> = categoriaEquipoRepository.findAll()
+
     fun crear(request: CategoriaEquipoRequest): CategoriaEquipo =
         categoriaEquipoRepository.save(CategoriaEquipo(nombre = request.nombre))
 }
