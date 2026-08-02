@@ -22,7 +22,7 @@ class GlobalExceptionHandler {
     fun handleNotFound(ex: ResourceNotFoundException, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         build(HttpStatus.NOT_FOUND, ex.message, req)
 
-    @ExceptionHandler(AccessDeniedException::class)
+    @ExceptionHandler(ForbiddenOperationException::class, AccessDeniedException::class)
     fun handleForbidden(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         build(HttpStatus.FORBIDDEN, ex.message ?: "No tienes permiso para esta operacion", req)
 

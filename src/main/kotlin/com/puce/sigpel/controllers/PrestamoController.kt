@@ -8,6 +8,7 @@ import com.puce.sigpel.services.PrestamoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,4 +39,10 @@ class PrestamoController(
     @PreAuthorize("hasRole('ENCARGADO')")
     fun cambiarEstado(@PathVariable id: Long, @Valid @RequestBody request: PrestamoEstadoRequest): PrestamoResponse =
         prestamoService.cambiarEstado(id, request).toResponse()
+
+    /** Autorizacion por rol (ESTUDIANTE) + por propiedad (dueno del prestamo, validado en el service). */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ESTUDIANTE')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun cancelar(@PathVariable id: Long) = prestamoService.cancelar(id)
 }

@@ -7,6 +7,7 @@ import com.puce.sigpel.entities.EstadoEquipo
 import com.puce.sigpel.entities.EstadoPrestamo
 import com.puce.sigpel.entities.Prestamo
 import com.puce.sigpel.exceptions.EquipoNoDisponibleException
+import com.puce.sigpel.exceptions.ForbiddenOperationException
 import com.puce.sigpel.exceptions.ResourceNotFoundException
 import com.puce.sigpel.repositories.PrestamoRepository
 import org.springframework.stereotype.Service
@@ -69,5 +70,23 @@ class PrestamoService(
             else -> Unit
         }
         return prestamoRepository.save(prestamo)
+    }
+
+    /**
+     * Cancela un prestamo propio. Autorizacion por propiedad: se compara
+     * prestamo.estudianteUser contra el username del JWT; si no coincide,
+     * se lanza ForbiddenOperationException -> 403, aunque el rol (ESTUDIANTE)
+     * sea correcto.
+     */
+    fun cancelar(id: Long) {
+        val prestamo = obtener(id)
+        if (prestamo.estudianteUser != CurrentUser.username()) {
+            throw ForbiddenOperationException("No puedes cancelar un prestamo que no es tuyo")
+        }
+        if (prestamo.estado != EstadoPrestamo.PENDIENTE) {
+            throw ForbiddenOperationException("Solo se puede cancelar un prestamo mientras esta PENDIENTE")
+        }
+        prestamo.equipo.estado = EstadoEquipo.DISPONIBLE
+        prestamoRepository.delete(prestamo)
     }
 }
