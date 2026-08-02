@@ -4,13 +4,16 @@ import com.puce.sigpel.dto.EquipoRequest
 import com.puce.sigpel.entities.CategoriaEquipo
 import com.puce.sigpel.entities.Equipo
 import com.puce.sigpel.entities.EstadoEquipo
+import com.puce.sigpel.exceptions.ResourceNotFoundException
 import com.puce.sigpel.repositories.EquipoRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Optional
 
 class EquipoServiceTest {
 
@@ -35,5 +38,14 @@ class EquipoServiceTest {
         assertEquals("Osciloscopio", savedSlot.captured.nombre)
         assertEquals(EstadoEquipo.DISPONIBLE, savedSlot.captured.estado)
         assertEquals(categoria, savedSlot.captured.categoria)
+    }
+
+    @Test
+    fun `obtener lanza ResourceNotFoundException si el equipo no existe`() {
+        every { equipoRepository.findById(99L) } returns Optional.empty()
+
+        assertThrows(ResourceNotFoundException::class.java) {
+            equipoService.obtener(99L)
+        }
     }
 }

@@ -29,8 +29,10 @@ class SecurityConfig {
             csrf { disable() }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
             authorizeHttpRequests {
-                // Catalogo publico: cualquiera puede consultar categorias.
+                // Catalogo publico: cualquiera puede consultar categorias y equipos.
                 authorize(HttpMethod.GET, "/categorias", permitAll)
+                authorize(HttpMethod.GET, "/equipos", permitAll)
+                authorize(HttpMethod.GET, "/equipos/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
             oauth2ResourceServer {
