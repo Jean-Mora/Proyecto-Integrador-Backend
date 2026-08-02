@@ -21,6 +21,10 @@ class PrestamoService(
         prestamoRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Prestamo $id no encontrado") }
 
+    @Transactional(readOnly = true)
+    fun listarMios(): List<Prestamo> =
+        prestamoRepository.findByEstudianteUser(CurrentUser.username())
+
     /**
      * Solicita un prestamo dentro de una unica transaccion: valida que el
      * equipo este DISPONIBLE, lo marca como PRESTADO y crea el prestamo.
