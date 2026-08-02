@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleNotFound(ex: ResourceNotFoundException, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        build(HttpStatus.NOT_FOUND, ex.message, req)
+
     @ExceptionHandler(AccessDeniedException::class)
     fun handleForbidden(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         build(HttpStatus.FORBIDDEN, ex.message ?: "No tienes permiso para esta operacion", req)
