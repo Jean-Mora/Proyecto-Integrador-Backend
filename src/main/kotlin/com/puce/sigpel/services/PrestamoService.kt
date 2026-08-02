@@ -1,8 +1,10 @@
 package com.puce.sigpel.services
 
 import com.puce.sigpel.config.CurrentUser
+import com.puce.sigpel.dto.PrestamoEstadoRequest
 import com.puce.sigpel.dto.PrestamoRequest
 import com.puce.sigpel.entities.EstadoEquipo
+import com.puce.sigpel.entities.EstadoPrestamo
 import com.puce.sigpel.entities.Prestamo
 import com.puce.sigpel.exceptions.EquipoNoDisponibleException
 import com.puce.sigpel.exceptions.ResourceNotFoundException
@@ -48,6 +50,19 @@ class PrestamoService(
             estudianteUser = CurrentUser.username(),
             fechaDevolucionEstimada = request.fechaDevolucionEstimada
         )
+        return prestamoRepository.save(prestamo)
+    }
+
+    /** ENCARGADO aprueba o rechaza un prestamo pendiente. */
+    fun cambiarEstado(id: Long, request: PrestamoEstadoRequest): Prestamo {
+        val prestamo = obtener(id)
+        prestamo.estado = request.estado
+        request.comentario?.let { prestamo.comentario = it }
+
+        when (request.estado) {
+            EstadoPrestamo.RECHAZADO -> prestamo.equipo.estado = EstadoEquipo.DISPONIBLE
+            else -> Unit
+        }
         return prestamoRepository.save(prestamo)
     }
 }
