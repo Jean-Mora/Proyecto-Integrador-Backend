@@ -2,8 +2,10 @@ package com.puce.sigpel.mappers
 
 import com.puce.sigpel.dto.CategoriaEquipoResponse
 import com.puce.sigpel.dto.EquipoResponse
+import com.puce.sigpel.dto.PrestamoResponse
 import com.puce.sigpel.entities.CategoriaEquipo
 import com.puce.sigpel.entities.Equipo
+import com.puce.sigpel.entities.Prestamo
 
 fun CategoriaEquipo.toResponse() = CategoriaEquipoResponse(
     id = requireNotNull(id),
@@ -17,4 +19,16 @@ fun Equipo.toResponse() = EquipoResponse(
     nombre = nombre,
     estado = estado,
     descripcion = descripcion
+)
+
+fun Prestamo.toResponse() = PrestamoResponse(
+    id = requireNotNull(id),
+    equipoId = requireNotNull(equipo.id),
+    equipoNombre = equipo.nombre,
+    estudianteUser = estudianteUser,
+    fechaSolicitud = fechaSolicitud,
+    fechaDevolucionEstimada = fechaDevolucionEstimada,
+    fechaDevolucionReal = fechaDevolucionReal,
+    estado = estado,
+    comentario = comentario
 )

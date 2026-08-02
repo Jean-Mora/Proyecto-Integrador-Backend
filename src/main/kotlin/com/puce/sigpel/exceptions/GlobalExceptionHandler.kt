@@ -3,6 +3,7 @@ package com.puce.sigpel.exceptions
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -24,6 +25,13 @@ class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException::class)
     fun handleForbidden(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         build(HttpStatus.FORBIDDEN, ex.message ?: "No tienes permiso para esta operacion", req)
+
+    @ExceptionHandler(
+        EquipoNoDisponibleException::class,
+        ObjectOptimisticLockingFailureException::class
+    )
+    fun handleConflict(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        build(HttpStatus.CONFLICT, ex.message ?: "El recurso fue modificado por otra solicitud, intenta de nuevo", req)
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException, req: HttpServletRequest): ResponseEntity<ErrorResponse> {
