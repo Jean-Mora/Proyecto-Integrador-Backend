@@ -9,6 +9,7 @@ import com.puce.sigpel.repositories.EquipoRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -47,5 +48,16 @@ class EquipoServiceTest {
         assertThrows(ResourceNotFoundException::class.java) {
             equipoService.obtener(99L)
         }
+    }
+
+    @Test
+    fun `eliminar borra el equipo cuando existe`() {
+        val equipo = Equipo(id = 2L, categoria = CategoriaEquipo(id = 1L, nombre = "Electronica"), nombre = "Multimetro")
+        every { equipoRepository.findById(2L) } returns Optional.of(equipo)
+        every { equipoRepository.delete(equipo) } returns Unit
+
+        equipoService.eliminar(2L)
+
+        verify(exactly = 1) { equipoRepository.delete(equipo) }
     }
 }

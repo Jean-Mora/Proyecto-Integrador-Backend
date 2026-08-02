@@ -39,4 +39,8 @@ class EquipoService(
         equipo.estado = request.estado
         return equipoRepository.save(equipo)
     }
+
+    fun eliminar(id: Long) {
+        equipoRepository.delete(obtener(id))
+    }
 }

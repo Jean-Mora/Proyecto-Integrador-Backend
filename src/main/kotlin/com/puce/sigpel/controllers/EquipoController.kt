@@ -9,6 +9,7 @@ import com.puce.sigpel.services.EquipoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -42,4 +43,9 @@ class EquipoController(
     @PreAuthorize("hasRole('ENCARGADO')")
     fun actualizarEstado(@PathVariable id: Long, @Valid @RequestBody request: EquipoEstadoRequest): EquipoResponse =
         equipoService.actualizarEstado(id, request).toResponse()
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ENCARGADO')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun eliminar(@PathVariable id: Long) = equipoService.eliminar(id)
 }
