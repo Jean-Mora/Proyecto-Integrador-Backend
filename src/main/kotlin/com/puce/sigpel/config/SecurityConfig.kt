@@ -2,6 +2,7 @@ package com.puce.sigpel.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -13,10 +14,12 @@ import org.springframework.security.web.SecurityFilterChain
  * Autenticacion: Cognito emite y firma el JWT; Spring Security lo valida en
  * cada endpoint usando el issuer-uri configurado en application.yml.
  *
- * El claim "cognito:groups" (ENCARGADO / ESTUDIANTE) se mapea a authorities
- * ROLE_*, que se usaran mas adelante para autorizacion por rol.
+ * Autorizacion por rol: el claim "cognito:groups" (ENCARGADO / ESTUDIANTE) se
+ * mapea a authorities ROLE_*. @EnableMethodSecurity habilita @PreAuthorize en
+ * los controllers para exigir el rol correcto en cada endpoint sensible.
  */
 @Configuration
+@EnableMethodSecurity
 class SecurityConfig {
 
     @Bean

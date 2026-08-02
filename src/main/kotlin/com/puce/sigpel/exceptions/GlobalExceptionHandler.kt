@@ -1,0 +1,32 @@
+package com.puce.sigpel.exceptions
+
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+
+/**
+ * Traduce las excepciones de negocio a respuestas HTTP consistentes.
+ * El 401 (sin token o token invalido) lo maneja directamente Spring Security
+ * antes de llegar aqui; el 403 (rol incorrecto) se traduce aqui a un cuerpo
+ * JSON legible en vez del error por defecto de Spring Security.
+ */
+@RestControllerAdvice
+class GlobalExceptionHandler {
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleForbidden(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        build(HttpStatus.FORBIDDEN, ex.message ?: "No tienes permiso para esta operacion", req)
+
+    private fun build(status: HttpStatus, message: String?, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        ResponseEntity.status(status).body(
+            ErrorResponse(
+                status = status.value(),
+                error = status.reasonPhrase,
+                message = message,
+                path = req.requestURI
+            )
+        )
+}
