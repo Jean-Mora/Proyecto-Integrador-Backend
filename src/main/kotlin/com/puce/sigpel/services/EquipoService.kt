@@ -1,5 +1,6 @@
 package com.puce.sigpel.services
 
+import com.puce.sigpel.dto.EquipoEstadoRequest
 import com.puce.sigpel.dto.EquipoRequest
 import com.puce.sigpel.entities.Equipo
 import com.puce.sigpel.entities.EstadoEquipo
@@ -30,6 +31,12 @@ class EquipoService(
             nombre = request.nombre,
             descripcion = request.descripcion
         )
+        return equipoRepository.save(equipo)
+    }
+
+    fun actualizarEstado(id: Long, request: EquipoEstadoRequest): Equipo {
+        val equipo = obtener(id)
+        equipo.estado = request.estado
         return equipoRepository.save(equipo)
     }
 }

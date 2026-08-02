@@ -17,6 +17,11 @@ data class EquipoRequest(
     val descripcion: String? = null
 )
 
+data class EquipoEstadoRequest(
+    @field:NotNull(message = "El estado es obligatorio")
+    val estado: EstadoEquipo
+)
+
 data class EquipoResponse(
     val id: Long,
     val categoriaId: Long,

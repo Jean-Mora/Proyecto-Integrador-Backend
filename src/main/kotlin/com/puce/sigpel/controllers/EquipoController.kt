@@ -1,5 +1,6 @@
 package com.puce.sigpel.controllers
 
+import com.puce.sigpel.dto.EquipoEstadoRequest
 import com.puce.sigpel.dto.EquipoRequest
 import com.puce.sigpel.dto.EquipoResponse
 import com.puce.sigpel.entities.EstadoEquipo
@@ -9,6 +10,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -35,4 +37,9 @@ class EquipoController(
     @ResponseStatus(HttpStatus.CREATED)
     fun crear(@Valid @RequestBody request: EquipoRequest): EquipoResponse =
         equipoService.crear(request).toResponse()
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ENCARGADO')")
+    fun actualizarEstado(@PathVariable id: Long, @Valid @RequestBody request: EquipoEstadoRequest): EquipoResponse =
+        equipoService.actualizarEstado(id, request).toResponse()
 }
