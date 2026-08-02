@@ -1,0 +1,23 @@
+### Build
+build/
+.gradle/
+out/
+bin/
+.kotlin/
+HELP.md
+!gradle/wrapper/gradle-wrapper.jar
+
+### IDE
+.idea/
+*.iws
+*.ipr
+.vscode/
+
+### OS
+.DS_Store
+
+### Config local
+application-local.yml
+application-local.properties
+.env
+.env.local
