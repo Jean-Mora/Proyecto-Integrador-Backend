@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: sigpel
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sigpel}
+    username: ${DB_USERNAME:sigpel}
+    password: ${DB_PASSWORD:sigpel}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Reemplazar con el issuer real del User Pool de Cognito, ej:
+          # https://cognito-idp.us-east-1.amazonaws.com/us-east-1_XXXXXXXXX
+          issuer-uri: https://cognito-idp.${AWS_REGION:us-east-1}.amazonaws.com/${COGNITO_USER_POOL_ID:}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.security: INFO
+    com.puce.sigpel: DEBUG
