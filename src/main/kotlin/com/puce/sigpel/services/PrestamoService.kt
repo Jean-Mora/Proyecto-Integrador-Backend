@@ -41,6 +41,12 @@ class PrestamoService(
      * traduce a 409 Conflict en vez de dejar datos inconsistentes.
      */
     fun solicitar(request: PrestamoRequest): Prestamo {
+        // --- HU-24: Validar que la fecha de devolución estimada sea posterior al momento actual / solicitud ---
+        // Asumiendo que fechaDevolucionEstimada es de tipo Instant o similar:
+        if (request.fechaDevolucionEstimada.isBefore(Instant.now()) || request.fechaDevolucionEstimada == Instant.now()) {
+            throw IllegalArgumentException("La fecha de devolución estimada debe ser posterior a la fecha actual")
+        }
+
         val equipo = equipoService.obtener(request.equipoId)
         if (equipo.estado != EstadoEquipo.DISPONIBLE) {
             throw EquipoNoDisponibleException("El equipo '${equipo.nombre}' no esta disponible")

@@ -121,4 +121,19 @@ class PrestamoServiceTest {
         assertEquals(EstadoEquipo.DISPONIBLE, equipoDisponible.estado)
         verify(exactly = 1) { prestamoRepository.delete(prestamoPropio) }
     }
+
+    @Test
+    fun `solicitar lanza IllegalArgumentException si la fecha de devolucion estimada es anterior o igual al momento actual`() {
+        val requestInvalido = PrestamoRequest(
+            equipoId = 1L,
+            fechaDevolucionEstimada = java.time.Instant.now().minusSeconds(3600) // Una hora en el pasado (inválida)
+        )
+
+        assertThrows(IllegalArgumentException::class.java) {
+            prestamoService.solicitar(requestInvalido)
+        }
+
+        verify(exactly = 0) { equipoService.obtener(any()) }
+        verify(exactly = 0) { prestamoRepository.save(any()) }
+    }
 }
