@@ -29,6 +29,11 @@ class PrestamoService(
     fun listarMios(): List<Prestamo> =
         prestamoRepository.findByEstudianteUser(CurrentUser.username())
 
+    /** Permite al ENCARGADO ver todos los préstamos del sistema (HU-22). */
+    @Transactional(readOnly = true)
+    open fun listarTodos(): List<Prestamo> =
+        prestamoRepository.findAll()
+
     /**
      * Solicita un prestamo dentro de una unica transaccion: valida que el
      * equipo este DISPONIBLE, lo marca como PRESTADO y crea el prestamo.
@@ -43,7 +48,7 @@ class PrestamoService(
     fun solicitar(request: PrestamoRequest): Prestamo {
         // --- HU-24: Validar que la fecha de devolución estimada sea posterior al momento actual / solicitud ---
         // Asumiendo que fechaDevolucionEstimada es de tipo Instant o similar:
-        if (request.fechaDevolucionEstimada.isBefore(Instant.now()) || request.fechaDevolucionEstimada == Instant.now()) {
+        if (request.fechaDevolucionEstimada?.isBefore(Instant.now()) != false) {
             throw IllegalArgumentException("La fecha de devolución estimada debe ser posterior a la fecha actual")
         }
 

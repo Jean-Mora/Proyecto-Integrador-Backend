@@ -34,6 +34,12 @@ class PrestamoController(
     fun misPrestamos(): List<PrestamoResponse> =
         prestamoService.listarMios().map { it.toResponse() }
 
+    /** Permite al ENCARGADO ver todos los préstamos del sistema (HU-22). */
+    @GetMapping
+    @PreAuthorize("hasRole('ENCARGADO')")
+    open fun listarTodos(): List<PrestamoResponse> =
+        prestamoService.listarTodos().map { it.toResponse() }
+
     /** Aprobar, rechazar o marcar como devuelto: el nuevo estado va en el body. */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ENCARGADO')")
