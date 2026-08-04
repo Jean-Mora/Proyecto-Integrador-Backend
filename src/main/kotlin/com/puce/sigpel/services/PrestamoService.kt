@@ -6,9 +6,11 @@ import com.puce.sigpel.dto.PrestamoRequest
 import com.puce.sigpel.entities.EstadoEquipo
 import com.puce.sigpel.entities.EstadoPrestamo
 import com.puce.sigpel.entities.Prestamo
+import com.puce.sigpel.entities.PrestamoAuditoria // <-- 1. Importar la entidad de auditoría
 import com.puce.sigpel.exceptions.EquipoNoDisponibleException
 import com.puce.sigpel.exceptions.ForbiddenOperationException
 import com.puce.sigpel.exceptions.ResourceNotFoundException
+import com.puce.sigpel.repositories.PrestamoAuditoriaRepository // <-- 2. Importar el repositorio de auditoría
 import com.puce.sigpel.repositories.PrestamoRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +20,8 @@ import java.time.Instant
 @Transactional
 class PrestamoService(
     private val prestamoRepository: PrestamoRepository,
-    private val equipoService: EquipoService
+    private val equipoService: EquipoService,
+    private val prestamoAuditoriaRepository: PrestamoAuditoriaRepository // <-- 3. Inyectarlo aquí en el constructor
 ) {
     @Transactional(readOnly = true)
     fun obtener(id: Long): Prestamo =
@@ -34,20 +37,7 @@ class PrestamoService(
     open fun listarTodos(): List<Prestamo> =
         prestamoRepository.findAll()
 
-    /**
-     * Solicita un prestamo dentro de una unica transaccion: valida que el
-     * equipo este DISPONIBLE, lo marca como PRESTADO y crea el prestamo.
-     *
-     * Desafio resuelto aqui: si dos estudiantes solicitan el mismo equipo al
-     * mismo tiempo, ambas transacciones leen la misma "version" del equipo.
-     * La primera en confirmar (commit) gana; cuando la segunda intenta guardar,
-     * Hibernate detecta que la version cambio y lanza
-     * ObjectOptimisticLockingFailureException, que el GlobalExceptionHandler
-     * traduce a 409 Conflict en vez de dejar datos inconsistentes.
-     */
     fun solicitar(request: PrestamoRequest): Prestamo {
-        // --- HU-24: Validar que la fecha de devolución estimada sea posterior al momento actual / solicitud ---
-        // Asumiendo que fechaDevolucionEstimada es de tipo Instant o similar:
         if (request.fechaDevolucionEstimada?.isBefore(Instant.now()) != false) {
             throw IllegalArgumentException("La fecha de devolución estimada debe ser posterior a la fecha actual")
         }
@@ -69,6 +59,11 @@ class PrestamoService(
     /** ENCARGADO aprueba, rechaza o marca como devuelto un prestamo. */
     fun cambiarEstado(id: Long, request: PrestamoEstadoRequest): Prestamo {
         val prestamo = obtener(id)
+
+        // Guardamos el estado anterior para la auditoría (HU-25)
+        val estadoAnteriorStr = prestamo.estado.name
+        val estadoNuevoStr = request.estado.name
+
         prestamo.estado = request.estado
         request.comentario?.let { prestamo.comentario = it }
 
@@ -80,15 +75,21 @@ class PrestamoService(
             }
             else -> Unit
         }
-        return prestamoRepository.save(prestamo)
+
+        val prestamoGuardado = prestamoRepository.save(prestamo)
+
+        // --- HU-25: Registrar la auditoría del cambio de estado con fecha y usuario ---
+        val auditoria = PrestamoAuditoria(
+            prestamoId = prestamoGuardado.id!!,
+            estadoAnterior = estadoAnteriorStr,
+            estadoNuevo = estadoNuevoStr,
+            modificadoPor = CurrentUser.username() // Obtiene automáticamente al ENCARGADO logueado
+        )
+        prestamoAuditoriaRepository.save(auditoria)
+
+        return prestamoGuardado
     }
 
-    /**
-     * Cancela un prestamo propio. Autorizacion por propiedad: se compara
-     * prestamo.estudianteUser contra el username del JWT; si no coincide,
-     * se lanza ForbiddenOperationException -> 403, aunque el rol (ESTUDIANTE)
-     * sea correcto.
-     */
     fun cancelar(id: Long) {
         val prestamo = obtener(id)
         if (prestamo.estudianteUser != CurrentUser.username()) {
