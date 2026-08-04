@@ -16,8 +16,16 @@ class EquipoService(
     private val categoriaEquipoService: CategoriaEquipoService
 ) {
     @Transactional(readOnly = true)
-    fun listar(estado: EstadoEquipo?): List<Equipo> =
-        if (estado != null) equipoRepository.findByEstadoWithCategoria(estado) else equipoRepository.findAllWithCategoria()
+    fun listar(categoriaId: Long?, estado: EstadoEquipo?): List<Equipo> {
+        // Valida que la categoría exista antes de filtrar; lanza ResourceNotFoundException si no.
+        categoriaId?.let { categoriaEquipoService.obtener(it) }
+
+        return when {
+            categoriaId == null && estado == null -> equipoRepository.findAllWithCategoria()
+            categoriaId == null -> equipoRepository.findByEstadoWithCategoria(estado!!)
+            else -> equipoRepository.findByCategoriaAndEstado(categoriaId, estado)
+        }
+    }
 
     @Transactional(readOnly = true)
     fun obtener(id: Long): Equipo =

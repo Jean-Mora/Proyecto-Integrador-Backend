@@ -25,9 +25,13 @@ import org.springframework.web.bind.annotation.RestController
 class EquipoController(
     private val equipoService: EquipoService
 ) {
+    // HU-23: GET /equipos?categoriaId=3&estado=DISPONIBLE (ambos opcionales, combinables)
     @GetMapping
-    fun listar(@RequestParam(required = false) estado: EstadoEquipo?): List<EquipoResponse> =
-        equipoService.listar(estado).map { it.toResponse() }
+    fun listar(
+        @RequestParam(required = false) categoriaId: Long?,
+        @RequestParam(required = false) estado: EstadoEquipo?
+    ): List<EquipoResponse> =
+        equipoService.listar(categoriaId, estado).map { it.toResponse() }
 
     @GetMapping("/{id}")
     fun obtener(@PathVariable id: Long): EquipoResponse =
