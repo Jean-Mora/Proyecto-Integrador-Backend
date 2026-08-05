@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.6"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	jacoco
 }
 
 group = "com.pucetec"
@@ -29,6 +30,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	// Solo para que el @SpringBootTest de contexto no necesite una Postgres real
 	// corriendo; la app en runtimeOnly usa exclusivamente Postgres.
@@ -50,4 +52,35 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+// Desactiva el jar plano (sin dependencias): solo se necesita el bootJar
+// ejecutable para el Dockerfile, y asi build/libs/*.jar no queda ambiguo.
+tasks.named<Jar>("jar") {
+	enabled = false
+}
+
+jacoco {
+	toolVersion = "0.8.12"
+}
+
+val coverageExclusions = listOf(
+	"com/pucetec/users/UsersApplication*",
+	"com/pucetec/users/config/**",
+	"com/pucetec/users/dto/**",
+	"com/pucetec/users/entities/**"
+)
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	classDirectories.setFrom(
+		files(classDirectories.files.map {
+			fileTree(it) { exclude(coverageExclusions) }
+		})
+	)
 }

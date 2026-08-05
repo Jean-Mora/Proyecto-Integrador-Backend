@@ -1,6 +1,7 @@
 package com.puce.sigpel.exceptions
 
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.orm.ObjectOptimisticLockingFailureException
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 /**
  * Translates business exceptions into consistent HTTP responses:
  * 400 validation, 403 wrong role/ownership, 404 resource not found,
- * 409 status or concurrency conflicts (optimistic locking).
+ * 409 status or concurrency conflicts (optimistic locking, or deleting a
+ * resource that is still referenced elsewhere).
  * 401 (no token or invalid token) is handled directly by Spring Security
  * before reaching this class.
  */
@@ -34,6 +36,11 @@ class GlobalExceptionHandler {
     )
     fun handleConflict(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         build(HttpStatus.CONFLICT, ex.message ?: "The resource was modified by another request, please try again", req)
+
+    /** e.g. deleting a category/equipment that is still referenced by other rows (FK violation). */
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handleDataIntegrityViolation(ex: DataIntegrityViolationException, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        build(HttpStatus.CONFLICT, "The resource cannot be deleted because it is still referenced by another resource", req)
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException, req: HttpServletRequest): ResponseEntity<ErrorResponse> {

@@ -35,6 +35,8 @@ flowchart LR
 ├── pgadmin/           # servers.json: pre-registra las dos conexiones de BD
 ├── docker-compose.yml
 ├── .env.example
+├── SIGPEL.postman_collection.json
+├── SIGPEL.postman_environment.json
 └── README.md
 ```
 
@@ -66,32 +68,44 @@ Cada línea de log del microservicio `sigpel` sigue este formato fijo (ver `sigp
 
 - `RequestLoggingFilter` (`sigpel/.../config/RequestLoggingFilter.kt`) pone el `sub` del JWT en el MDC y deja una línea `event=http.request` al entrar y `event=http.response` (con el código HTTP) al salir de **cada** petición.
 - `LoggingAuthenticationEntryPoint` cubre el caso 401 (sin token), que ocurre antes de que el filtro anterior pueda ejecutarse.
-- Eventos de negocio (`event=loan.requested`, `event=loan.status_changed`, `event=category.rejected`, `event=incident.registered`, etc.) están agregados en los métodos principales de cada `Service` — no en todos, priorizando los flujos que se demuestran en Postman.
-- SQL de cada petición, con parámetros: `org.hibernate.SQL=DEBUG` + `org.hibernate.orm.jdbc.bind=TRACE` en `application.yml`, y `log_statement=all` en ambas bases (ver `docker-compose.yml`).
+- Eventos de negocio (`event=loan.requested`, `event=loan.status_changed`, `event=category.rejected`, `event=incident.registered`, `event=user.created`, etc.) agregados en los métodos principales de cada `Service` de **ambos** microservicios.
+- SQL de cada petición, con parámetros: `org.hibernate.SQL=DEBUG` + `org.hibernate.orm.jdbc.bind=TRACE` en `application.yml`/`application.yaml`, y `log_statement=all` en ambas bases (ver `docker-compose.yml`).
 - Auditoría de la entidad principal (`Loan`): tabla `loan_audit` (quién, qué cambio de estado, cuándo) — `sigpel/.../entities/LoanAudit.kt`.
 - No se loguean contraseñas, tokens completos ni datos personales sin enmascarar.
 
-`users/` todavía usa el logging por defecto de Spring Boot — no se le aplicó este mismo estándar.
+`users/` usa exactamente el mismo estándar (`users/src/main/kotlin/com/pucetec/users/config/RequestLoggingFilter.kt` y `LoggingAuthenticationEntryPoint.kt`).
 
 ## Tests y cobertura
 
-- `sigpel/`: tests unitarios (MockK) por servicio — `cd sigpel && ./gradlew test`.
-- `users/`: tests unitarios (Mockito) + prueba de contexto — `cd users && ./gradlew test`.
-- **Pendiente:** medir cobertura con el coverage del IDE (o JaCoCo) y adjuntar captura; agregar tests de integración (`@SpringBootTest`/`MockMvc`) que verifiquen 401 sin token y 403 con rol incorrecto a nivel HTTP.
+Cobertura medida con JaCoCo (excluye configuración, DTOs, entidades y la clase `Application`, como permite la rúbrica):
+
+| Microservicio | Cobertura de líneas | Cómo generarla |
+|---|---:|---|
+| `sigpel/` | **99.5%** | `cd sigpel && ./gradlew test jacocoTestReport` → `build/reports/jacoco/test/html/index.html` |
+| `users/` | **94.3%** | `cd users && ./gradlew test jacocoTestReport` → `build/reports/jacoco/test/html/index.html` |
+
+Incluye tests unitarios (MockK / Mockito) por servicio, y tests de integración de extremo a extremo (`@SpringBootTest` + `MockMvc`, con Spring Security real y el `JwtDecoder` mockeado) que recorren cada endpoint de ambos microservicios: casos felices, 401 sin token, 403 con rol equivocado o dueño incorrecto, 404, 400 de validación, y 409 de duplicados/conflicto/integridad referencial. Un test de integración encontró un bug real (borrar un equipo o categoría aún referenciados devolvía 500 sin control) que se corrigió como parte de este trabajo — ver `GlobalExceptionHandler.handleDataIntegrityViolation`.
 
 ## Colección de Postman
 
-`sigpel/SIGPEL API - Demo.postman_collection.json` — **ojo:** hoy apunta directo al backend `sigpel` (`{{base_url}}/categories`, etc.), no a través de nginx. Falta actualizarla para pasar por `http://localhost:9090/sigpel/...` y agregar aserciones (`pm.test`) además de flujos de `users`.
+`SIGPEL.postman_collection.json` (+ `SIGPEL.postman_environment.json`) en la raíz del repo — **pasa por nginx**, no directo a los microservicios (`{{base_url}}` = `http://localhost:9090`, rutas `/users/...` y `/sigpel/...`). Incluye:
+
+- Login contra Cognito (guarda `token_encargado`/`token_estudiante` automáticamente).
+- Los endpoints de **ambos** microservicios, con `pm.test` en cada request (código de estado esperado, y guardado automático de ids en variables de colección para encadenar requests).
+- Casos felices, de error (400/404/409) y de autorización (401/403) para cada dominio.
+- Ejecutable de principio a fin con el Collection Runner (las carpetas están en orden: Auth → Users → Categories → Equipment → Loans → Incidents).
+
+Importar ambos archivos en Postman, seleccionar el environment `SIGPEL - Local (nginx)`, completar `staff_password`/`student_password` (no se versionan), y correr `Login ENCARGADO`/`Login ESTUDIANTE` antes que el resto.
 
 ## Mapeo con la rúbrica
 
 | Criterio | Estado |
 |---|---|
 | 1. Monorepo (users + nginx + sigpel) | Hecho: las dos bases, healthchecks, `service_healthy`/`service_started` |
-| 2. Logging de BD y de lógica | Hecho en `sigpel/`; falta replicar en `users/` |
+| 2. Logging de BD y de lógica | Hecho en ambos microservicios |
 | 3. Explorador de BD | Hecho: pgAdmin con las dos conexiones pre-registradas |
 | 4. Logs a la mano | Hecho: `docker compose logs -f`, todo a stdout |
 | 5. Entrega (nombre, 100%, ambos suben) | Nombre de repo sin el sufijo `_nombre_del_proyecto` — confirmar si hace falta corregirlo |
-| 6. Tests al 100% | Parcial: tests unitarios existen, falta cobertura medida e integración HTTP |
-| 7. Postman completo | Parcial: falta pasar por nginx y agregar aserciones |
-| 8. Cognito auth/autorización | Hecho en `sigpel/` (roles, autorización por propiedad); `users/` solo exige token, sin roles diferenciados |
+| 6. Tests al 100% | 99.5% (sigpel) / 94.3% (users) medido con JaCoCo, con integración HTTP de 401/403 |
+| 7. Postman completo | Hecho: pasa por nginx, con aserciones, ambos microservicios |
+| 8. Cognito auth/autorización | Hecho: JWT validado en ambos, mismo issuer; roles diferenciados y autorización por propiedad en `sigpel/`; `users/` exige token pero no tiene roles propios (no hay distinción de permisos que probar ahí) |

@@ -14,6 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
 
   # Resource Server: valida el JWT que emite Cognito.
   # El issuer-uri apunta al User Pool; Spring descarga las llaves publicas (JWKS)
@@ -30,6 +31,10 @@ server:
   port: 8686
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} | %-5level | ${spring.application.name} | sub=%X{sub:-anonimo} | %logger{40} | %msg%n"
   level:
     org.springframework.security: INFO
     com.pucetec.users: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
