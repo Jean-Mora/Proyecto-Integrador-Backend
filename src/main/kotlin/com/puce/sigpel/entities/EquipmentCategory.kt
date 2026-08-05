@@ -8,12 +8,12 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "categorias_equipo")
-class CategoriaEquipo(
+@Table(name = "equipment_categories")
+class EquipmentCategory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     @Column(nullable = false, length = 50)
-    var nombre: String
+    var name: String
 )

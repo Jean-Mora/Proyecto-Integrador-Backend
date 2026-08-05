@@ -1,9 +1,9 @@
 package com.puce.sigpel.controllers
 
-import com.puce.sigpel.dto.IncidenciaRequest
-import com.puce.sigpel.dto.IncidenciaResponse
+import com.puce.sigpel.dto.IncidentRequest
+import com.puce.sigpel.dto.IncidentResponse
 import com.puce.sigpel.mappers.toResponse
-import com.puce.sigpel.services.IncidenciaService
+import com.puce.sigpel.services.IncidentService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,25 +18,25 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/incidencias")
+@RequestMapping("/incidents")
 @PreAuthorize("hasRole('ENCARGADO')")
-class IncidenciaController(
-    private val incidenciaService: IncidenciaService
+class IncidentController(
+    private val incidentService: IncidentService
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun registrar(@Valid @RequestBody request: IncidenciaRequest): IncidenciaResponse =
-        incidenciaService.registrar(request).toResponse()
+    fun register(@Valid @RequestBody request: IncidentRequest): IncidentResponse =
+        incidentService.register(request).toResponse()
 
     @GetMapping("/{id}")
-    fun obtener(@PathVariable id: Long): IncidenciaResponse =
-        incidenciaService.obtener(id).toResponse()
+    fun get(@PathVariable id: Long): IncidentResponse =
+        incidentService.get(id).toResponse()
 
     @PatchMapping("/{id}")
-    fun actualizar(@PathVariable id: Long, @Valid @RequestBody request: IncidenciaRequest): IncidenciaResponse =
-        incidenciaService.actualizar(id, request).toResponse()
+    fun update(@PathVariable id: Long, @Valid @RequestBody request: IncidentRequest): IncidentResponse =
+        incidentService.update(id, request).toResponse()
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun eliminar(@PathVariable id: Long) = incidenciaService.eliminar(id)
+    fun delete(@PathVariable id: Long) = incidentService.delete(id)
 }

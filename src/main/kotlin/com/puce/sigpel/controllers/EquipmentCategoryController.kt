@@ -1,9 +1,9 @@
 package com.puce.sigpel.controllers
 
-import com.puce.sigpel.dto.CategoriaEquipoRequest
-import com.puce.sigpel.dto.CategoriaEquipoResponse
+import com.puce.sigpel.dto.EquipmentCategoryRequest
+import com.puce.sigpel.dto.EquipmentCategoryResponse
 import com.puce.sigpel.mappers.toResponse
-import com.puce.sigpel.services.CategoriaEquipoService
+import com.puce.sigpel.services.EquipmentCategoryService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,27 +18,27 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/categorias")
-class CategoriaEquipoController(
-    private val categoriaEquipoService: CategoriaEquipoService
+@RequestMapping("/categories")
+class EquipmentCategoryController(
+    private val equipmentCategoryService: EquipmentCategoryService
 ) {
     @GetMapping
-    fun listar(): List<CategoriaEquipoResponse> =
-        categoriaEquipoService.listar().map { it.toResponse() }
+    fun list(): List<EquipmentCategoryResponse> =
+        equipmentCategoryService.list().map { it.toResponse() }
 
     @PostMapping
     @PreAuthorize("hasRole('ENCARGADO')")
     @ResponseStatus(HttpStatus.CREATED)
-    fun crear(@Valid @RequestBody request: CategoriaEquipoRequest): CategoriaEquipoResponse =
-        categoriaEquipoService.crear(request).toResponse()
+    fun create(@Valid @RequestBody request: EquipmentCategoryRequest): EquipmentCategoryResponse =
+        equipmentCategoryService.create(request).toResponse()
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ENCARGADO')")
-    fun editar(@PathVariable id: Long, @Valid @RequestBody request: CategoriaEquipoRequest): CategoriaEquipoResponse =
-        categoriaEquipoService.editar(id, request).toResponse()
+    fun update(@PathVariable id: Long, @Valid @RequestBody request: EquipmentCategoryRequest): EquipmentCategoryResponse =
+        equipmentCategoryService.update(id, request).toResponse()
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ENCARGADO')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun eliminar(@PathVariable id: Long) = categoriaEquipoService.eliminar(id)
+    fun delete(@PathVariable id: Long) = equipmentCategoryService.delete(id)
 }

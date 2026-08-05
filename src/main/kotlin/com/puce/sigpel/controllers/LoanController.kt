@@ -1,10 +1,10 @@
 package com.puce.sigpel.controllers
 
-import com.puce.sigpel.dto.PrestamoEstadoRequest
-import com.puce.sigpel.dto.PrestamoRequest
-import com.puce.sigpel.dto.PrestamoResponse
+import com.puce.sigpel.dto.LoanRequest
+import com.puce.sigpel.dto.LoanResponse
+import com.puce.sigpel.dto.LoanStatusRequest
 import com.puce.sigpel.mappers.toResponse
-import com.puce.sigpel.services.PrestamoService
+import com.puce.sigpel.services.LoanService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -19,36 +19,36 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/prestamos")
-class PrestamoController(
-    private val prestamoService: PrestamoService
+@RequestMapping("/loans")
+class LoanController(
+    private val loanService: LoanService
 ) {
     @PostMapping
     @PreAuthorize("hasRole('ESTUDIANTE')")
     @ResponseStatus(HttpStatus.CREATED)
-    fun solicitar(@Valid @RequestBody request: PrestamoRequest): PrestamoResponse =
-        prestamoService.solicitar(request).toResponse()
+    fun request(@Valid @RequestBody request: LoanRequest): LoanResponse =
+        loanService.request(request).toResponse()
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('ESTUDIANTE')")
-    fun misPrestamos(): List<PrestamoResponse> =
-        prestamoService.listarMios().map { it.toResponse() }
+    fun myLoans(): List<LoanResponse> =
+        loanService.listMine().map { it.toResponse() }
 
-    /** Permite al ENCARGADO ver todos los préstamos del sistema (HU-22). */
+    /** Allows STAFF (ENCARGADO) to see every loan in the system (HU-22). */
     @GetMapping
     @PreAuthorize("hasRole('ENCARGADO')")
-    open fun listarTodos(): List<PrestamoResponse> =
-        prestamoService.listarTodos().map { it.toResponse() }
+    fun listAll(): List<LoanResponse> =
+        loanService.listAll().map { it.toResponse() }
 
-    /** Aprobar, rechazar o marcar como devuelto: el nuevo estado va en el body. */
+    /** Approve, reject or mark as returned: the new status goes in the body. */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ENCARGADO')")
-    fun cambiarEstado(@PathVariable id: Long, @Valid @RequestBody request: PrestamoEstadoRequest): PrestamoResponse =
-        prestamoService.cambiarEstado(id, request).toResponse()
+    fun changeStatus(@PathVariable id: Long, @Valid @RequestBody request: LoanStatusRequest): LoanResponse =
+        loanService.changeStatus(id, request).toResponse()
 
-    /** Autorizacion por rol (ESTUDIANTE) + por propiedad (dueno del prestamo, validado en el service). */
+    /** Authorization by role (ESTUDIANTE) + by ownership (loan owner, validated in the service). */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ESTUDIANTE')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun cancelar(@PathVariable id: Long) = prestamoService.cancelar(id)
+    fun cancel(@PathVariable id: Long) = loanService.cancel(id)
 }

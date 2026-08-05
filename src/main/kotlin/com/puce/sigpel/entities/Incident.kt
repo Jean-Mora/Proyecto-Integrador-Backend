@@ -9,30 +9,30 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.Instant
 
 @Entity
-@Table(name = "incidencias")
-class Incidencia(
+@Table(name = "incidents")
+class Incident(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    // FK + UK: prestamo_id es unico para que la relacion 1:1 se respete tambien
-    // a nivel de base de datos, no solo en el mapeo de JPA.
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prestamo_id", nullable = false, unique = true)
-    var prestamo: Prestamo,
+    // A loan can have several incidents over time (damage, loss, delay), so this is
+    // the "many" side of a 1:N relationship, not a 1:1.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "loan_id", nullable = false)
+    var loan: Loan,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    var tipo: TipoIncidencia,
+    var type: IncidentType,
 
     @Column(length = 255)
-    var descripcion: String? = null,
+    var description: String? = null,
 
-    @Column(name = "fecha_reporte", nullable = false)
-    var fechaReporte: Instant = Instant.now()
+    @Column(name = "report_date", nullable = false)
+    var reportDate: Instant = Instant.now()
 )

@@ -1,7 +1,7 @@
 package com.puce.sigpel.entities
 
-enum class EstadoEquipo { DISPONIBLE, PRESTADO, MANTENIMIENTO }
+enum class EquipmentStatus { AVAILABLE, LOANED, MAINTENANCE }
 
-enum class EstadoPrestamo { PENDIENTE, APROBADO, RECHAZADO, DEVUELTO }
+enum class LoanStatus { PENDING, APPROVED, REJECTED, RETURNED }
 
-enum class TipoIncidencia { DANIO, PERDIDA, RETRASO }
+enum class IncidentType { DAMAGE, LOSS, DELAY }

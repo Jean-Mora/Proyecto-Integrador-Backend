@@ -1,44 +1,44 @@
 package com.puce.sigpel.mappers
 
-import com.puce.sigpel.dto.CategoriaEquipoResponse
-import com.puce.sigpel.dto.EquipoResponse
-import com.puce.sigpel.dto.IncidenciaResponse
-import com.puce.sigpel.dto.PrestamoResponse
-import com.puce.sigpel.entities.CategoriaEquipo
-import com.puce.sigpel.entities.Equipo
-import com.puce.sigpel.entities.Incidencia
-import com.puce.sigpel.entities.Prestamo
+import com.puce.sigpel.dto.EquipmentCategoryResponse
+import com.puce.sigpel.dto.EquipmentResponse
+import com.puce.sigpel.dto.IncidentResponse
+import com.puce.sigpel.dto.LoanResponse
+import com.puce.sigpel.entities.Equipment
+import com.puce.sigpel.entities.EquipmentCategory
+import com.puce.sigpel.entities.Incident
+import com.puce.sigpel.entities.Loan
 
-fun CategoriaEquipo.toResponse() = CategoriaEquipoResponse(
+fun EquipmentCategory.toResponse() = EquipmentCategoryResponse(
     id = requireNotNull(id),
-    nombre = nombre
+    name = name
 )
 
-fun Equipo.toResponse() = EquipoResponse(
+fun Equipment.toResponse() = EquipmentResponse(
     id = requireNotNull(id),
-    categoriaId = requireNotNull(categoria.id),
-    categoriaNombre = categoria.nombre,
-    nombre = nombre,
-    estado = estado,
-    descripcion = descripcion
+    categoryId = requireNotNull(category.id),
+    categoryName = category.name,
+    name = name,
+    status = status,
+    description = description
 )
 
-fun Prestamo.toResponse() = PrestamoResponse(
+fun Loan.toResponse() = LoanResponse(
     id = requireNotNull(id),
-    equipoId = requireNotNull(equipo.id),
-    equipoNombre = equipo.nombre,
-    estudianteUser = estudianteUser,
-    fechaSolicitud = fechaSolicitud,
-    fechaDevolucionEstimada = fechaDevolucionEstimada,
-    fechaDevolucionReal = fechaDevolucionReal,
-    estado = estado,
-    comentario = comentario
+    equipmentId = requireNotNull(equipment.id),
+    equipmentName = equipment.name,
+    studentUser = studentUser,
+    requestDate = requestDate,
+    estimatedReturnDate = estimatedReturnDate,
+    actualReturnDate = actualReturnDate,
+    status = status,
+    comment = comment
 )
 
-fun Incidencia.toResponse() = IncidenciaResponse(
+fun Incident.toResponse() = IncidentResponse(
     id = requireNotNull(id),
-    prestamoId = requireNotNull(prestamo.id),
-    tipo = tipo,
-    descripcion = descripcion,
-    fechaReporte = fechaReporte
+    loanId = requireNotNull(loan.id),
+    type = type,
+    description = description,
+    reportDate = reportDate
 )

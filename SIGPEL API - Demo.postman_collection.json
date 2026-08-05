@@ -2,17 +2,17 @@
   "info": {
     "_postman_id": "0d9289ea-acd5-4d42-b8dd-35c1bf89a47e",
     "name": "SIGPEL API - Demo",
-    "description": "Coleccion de demo para la API de SIGPEL (Sistema de Gestion de Prestamos de Equipos).\n\nAutenticacion: la API valida JWT emitidos por AWS Cognito (Bearer token). Antes de correr los requests protegidos, obten un id_token/access_token de Cognito (con el claim `cognito:groups` = ENCARGADO o ESTUDIANTE) y pegalo en la variable de coleccion `jwt_token`.\n\nEndpoints publicos (no requieren token): GET /categorias, GET /equipos, GET /equipos/{id}.",
+    "description": "Coleccion de demo para la API de SIGPEL (Sistema de Gestion de Prestamos de Equipos).\n\nAutenticacion: la API valida JWT emitidos por AWS Cognito (Bearer token). Antes de correr los requests protegidos, obten un id_token/access_token de Cognito (con el claim `cognito:groups` = ENCARGADO o ESTUDIANTE) y pegalo en la variable de coleccion `jwt_token`.\n\nEndpoints publicos (no requieren token): GET /categories, GET /equipment, GET /equipment/{id}.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54540741",
     "_collection_link": "https://go.postman.co/collection/54540741-0d9289ea-acd5-4d42-b8dd-35c1bf89a47e?source=collection_link"
   },
   "item": [
     {
-      "name": "Categorias",
+      "name": "Categories",
       "item": [
         {
-          "name": "Listar categorias (publico)",
+          "name": "List categories (public)",
           "request": {
             "auth": {
               "type": "noauth"
@@ -20,19 +20,19 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/categorias",
+              "raw": "{{base_url}}/categories",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "categorias"
+                "categories"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Crear categoria (ENCARGADO)",
+          "name": "Create category (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -53,22 +53,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"\"\n}"
+              "raw": "{\n  \"name\": \"\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/categorias",
+              "raw": "{{base_url}}/categories",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "categorias"
+                "categories"
               ]
-            }
+            },
+            "description": "Devuelve 409 Conflict si ya existe una categoria con el mismo nombre (sin distinguir mayusculas/minusculas)."
           },
           "response": []
         },
         {
-          "name": "Editar categoria (ENCARGADO)",
+          "name": "Update category (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -89,23 +90,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Laptops\"\n}"
+              "raw": "{\n  \"name\": \"Laptops\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/categorias/{{categoria_id}}",
+              "raw": "{{base_url}}/categories/{{category_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "categorias",
-                "{{categoria_id}}"
+                "categories",
+                "{{category_id}}"
               ]
-            }
+            },
+            "description": "Devuelve 409 Conflict si el nuevo nombre ya lo tiene otra categoria."
           },
           "response": []
         },
         {
-          "name": "Eliminar categoria (ENCARGADO)",
+          "name": "Delete category (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -120,13 +122,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/categorias/{{categoria_id}}",
+              "raw": "{{base_url}}/categories/{{category_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "categorias",
-                "{{categoria_id}}"
+                "categories",
+                "{{category_id}}"
               ]
             }
           },
@@ -135,10 +137,10 @@
       ]
     },
     {
-      "name": "Equipos",
+      "name": "Equipment",
       "item": [
         {
-          "name": "Listar equipos (publico)",
+          "name": "List equipment (public)",
           "request": {
             "auth": {
               "type": "noauth"
@@ -146,19 +148,19 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/equipos",
+              "raw": "{{base_url}}/equipment",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos"
+                "equipment"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Listar equipos por estado (publico)",
+          "name": "List equipment by category and status (public)",
           "request": {
             "auth": {
               "type": "noauth"
@@ -166,18 +168,23 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/equipos?estado=MANTENIMIENTO",
+              "raw": "{{base_url}}/equipment?categoryId={{category_id}}&status=MAINTENANCE",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos"
+                "equipment"
               ],
               "query": [
                 {
-                  "key": "estado",
-                  "value": "MANTENIMIENTO",
-                  "description": "DISPONIBLE | PRESTADO | MANTENIMIENTO"
+                  "key": "categoryId",
+                  "value": "{{category_id}}",
+                  "description": "Optional, combinable with status"
+                },
+                {
+                  "key": "status",
+                  "value": "MAINTENANCE",
+                  "description": "AVAILABLE | LOANED | MAINTENANCE"
                 }
               ]
             }
@@ -185,7 +192,7 @@
           "response": []
         },
         {
-          "name": "Obtener equipo por id (publico)",
+          "name": "Get equipment by id (public)",
           "request": {
             "auth": {
               "type": "noauth"
@@ -193,20 +200,20 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos",
-                "{{equipo_id}}"
+                "equipment",
+                "{{equipment_id}}"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Crear equipo (ENCARGADO)",
+          "name": "Create equipment (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -227,22 +234,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoriaId\": {{categoria_id}},\n  \"nombre\": \"\",\n  \"descripcion\": \"Proyector para aulas, incluye cable HDMI\"\n}"
+              "raw": "{\n  \"categoryId\": {{category_id}},\n  \"name\": \"\",\n  \"description\": \"Classroom projector, includes HDMI cable\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/equipos",
+              "raw": "{{base_url}}/equipment",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos"
+                "equipment"
               ]
-            }
+            },
+            "description": "Se pueden crear varios equipos con el mismo nombre dentro de la misma categoria (por ejemplo, varias laptops identicas como items de inventario separados)."
           },
           "response": []
         },
         {
-          "name": "Actualizar estado de equipo (ENCARGADO)",
+          "name": "Update equipment status (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -263,23 +271,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estado\": \"MANTENIMIENTO\"\n}"
+              "raw": "{\n  \"status\": \"MAINTENANCE\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos",
-                "{{equipo_id}}"
+                "equipment",
+                "{{equipment_id}}"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Eliminar equipo (ENCARGADO)",
+          "name": "Delete equipment (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -294,13 +302,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/equipos/{{equipo_id}}",
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "equipos",
-                "{{equipo_id}}"
+                "equipment",
+                "{{equipment_id}}"
               ]
             }
           },
@@ -309,10 +317,10 @@
       ]
     },
     {
-      "name": "Prestamos",
+      "name": "Loans",
       "item": [
         {
-          "name": "Solicitar prestamo (ESTUDIANTE)",
+          "name": "Request loan (ESTUDIANTE)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -333,22 +341,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"equipoId\": {{equipo_id}},\n  \"fechaDevolucionEstimada\": \"2026-08-04T17:00:00Z\"\n}"
+              "raw": "{\n  \"equipmentId\": {{equipment_id}},\n  \"estimatedReturnDate\": \"2026-08-10T17:00:00Z\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/prestamos",
+              "raw": "{{base_url}}/loans",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "prestamos"
+                "loans"
               ]
-            }
+            },
+            "description": "estimatedReturnDate debe ser una fecha futura; si es anterior al momento actual, devuelve 400 Bad Request."
           },
           "response": []
         },
         {
-          "name": "Mis prestamos (ESTUDIANTE)",
+          "name": "My loans (ESTUDIANTE)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -363,12 +372,12 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/prestamos/me",
+              "raw": "{{base_url}}/loans/me",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "prestamos",
+                "loans",
                 "me"
               ]
             }
@@ -376,7 +385,34 @@
           "response": []
         },
         {
-          "name": "Cambiar estado de prestamo (ENCARGADO)",
+          "name": "List all loans (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/loans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change loan status (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -397,24 +433,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estado\": \"APROBADO\",\n  \"comentario\": \"Entregado en bodega 2\"\n}"
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"comment\": \"Delivered at warehouse 2\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
+              "raw": "{{base_url}}/loans/{{loan_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "prestamos",
-                "{{prestamo_id}}"
+                "loans",
+                "{{loan_id}}"
               ]
             },
-            "description": "Valores validos para estado: PENDIENTE | APROBADO | RECHAZADO | DEVUELTO"
+            "description": "Valores validos para status: PENDING | APPROVED | REJECTED | RETURNED"
           },
           "response": []
         },
         {
-          "name": "Cancelar prestamo (ESTUDIANTE)",
+          "name": "Cancel loan (ESTUDIANTE)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -429,13 +465,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/prestamos/{{prestamo_id}}",
+              "raw": "{{base_url}}/loans/{{loan_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "prestamos",
-                "{{prestamo_id}}"
+                "loans",
+                "{{loan_id}}"
               ]
             }
           },
@@ -444,10 +480,10 @@
       ]
     },
     {
-      "name": "Incidencias",
+      "name": "Incidents",
       "item": [
         {
-          "name": "Registrar incidencia (ENCARGADO)",
+          "name": "Register incident (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -468,23 +504,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"prestamoId\": {{prestamo_id}},\n  \"tipo\": \"DANIO\",\n  \"descripcion\": \"Pantalla del proyector con manchas\"\n}"
+              "raw": "{\n  \"loanId\": {{loan_id}},\n  \"type\": \"DAMAGE\",\n  \"description\": \"Projector screen has stains\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/incidencias",
+              "raw": "{{base_url}}/incidents",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "incidencias"
+                "incidents"
               ]
             },
-            "description": "Valores validos para tipo: DANIO | PERDIDA | RETRASO"
+            "description": "Valores validos para type: DAMAGE | LOSS | DELAY. Un mismo prestamo puede tener varias incidencias registradas."
           },
           "response": []
         },
         {
-          "name": "Obtener incidencia (ENCARGADO)",
+          "name": "Get incident (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -499,20 +535,20 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "incidencias",
-                "{{incidencia_id}}"
+                "incidents",
+                "{{incident_id}}"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Actualizar incidencia (ENCARGADO)",
+          "name": "Update incident (ENCARGADO)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -533,34 +569,34 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"prestamoId\": {{prestamo_id}},\n  \"tipo\": \"RETRASO\",\n  \"descripcion\": \"Entrega con 2 dias de retraso\"\n}"
+              "raw": "{\n  \"loanId\": {{loan_id}},\n  \"type\": \"DELAY\",\n  \"description\": \"Delivered 2 days late\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "incidencias",
-                "{{incidencia_id}}"
+                "incidents",
+                "{{incident_id}}"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Eliminar incidencia (ENCARGADO)",
+          "name": "Delete incident (ENCARGADO)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/incidencias/{{incidencia_id}}",
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
-                "incidencias",
-                "{{incidencia_id}}"
+                "incidents",
+                "{{incident_id}}"
               ]
             }
           },
@@ -761,19 +797,19 @@
       "value": ""
     },
     {
-      "key": "categoria_id",
+      "key": "category_id",
       "value": "1"
     },
     {
-      "key": "equipo_id",
+      "key": "equipment_id",
       "value": "1"
     },
     {
-      "key": "prestamo_id",
+      "key": "loan_id",
       "value": "1"
     },
     {
-      "key": "incidencia_id",
+      "key": "incident_id",
       "value": "1"
     },
     {

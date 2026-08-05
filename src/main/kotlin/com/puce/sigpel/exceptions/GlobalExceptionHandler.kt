@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 /**
- * Traduce las excepciones de negocio a respuestas HTTP consistentes:
- * 400 validaciones, 403 rol/propiedad incorrectos, 404 recurso inexistente,
- * 409 conflictos de estado o de concurrencia (optimistic locking).
- * El 401 (sin token o token invalido) lo maneja directamente Spring Security
- * antes de llegar aqui.
+ * Translates business exceptions into consistent HTTP responses:
+ * 400 validation, 403 wrong role/ownership, 404 resource not found,
+ * 409 status or concurrency conflicts (optimistic locking).
+ * 401 (no token or invalid token) is handled directly by Spring Security
+ * before reaching this class.
  */
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -25,21 +25,25 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenOperationException::class, AccessDeniedException::class)
     fun handleForbidden(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
-        build(HttpStatus.FORBIDDEN, ex.message ?: "No tienes permiso para esta operacion", req)
+        build(HttpStatus.FORBIDDEN, ex.message ?: "You do not have permission for this operation", req)
 
     @ExceptionHandler(
-        EquipoNoDisponibleException::class,
-        IncidenciaYaRegistradaException::class,
+        EquipmentNotAvailableException::class,
+        DuplicateResourceException::class,
         ObjectOptimisticLockingFailureException::class
     )
     fun handleConflict(ex: Exception, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
-        build(HttpStatus.CONFLICT, ex.message ?: "El recurso fue modificado por otra solicitud, intenta de nuevo", req)
+        build(HttpStatus.CONFLICT, ex.message ?: "The resource was modified by another request, please try again", req)
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException, req: HttpServletRequest): ResponseEntity<ErrorResponse> {
         val message = ex.bindingResult.fieldErrors.joinToString("; ") { "${it.field}: ${it.defaultMessage}" }
         return build(HttpStatus.BAD_REQUEST, message, req)
     }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(ex: IllegalArgumentException, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        build(HttpStatus.BAD_REQUEST, ex.message, req)
 
     private fun build(status: HttpStatus, message: String?, req: HttpServletRequest): ResponseEntity<ErrorResponse> =
         ResponseEntity.status(status).body(

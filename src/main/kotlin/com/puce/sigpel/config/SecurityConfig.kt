@@ -30,9 +30,9 @@ class SecurityConfig {
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
             authorizeHttpRequests {
                 // Catalogo publico: cualquiera puede consultar categorias y equipos.
-                authorize(HttpMethod.GET, "/categorias", permitAll)
-                authorize(HttpMethod.GET, "/equipos", permitAll)
-                authorize(HttpMethod.GET, "/equipos/**", permitAll)
+                authorize(HttpMethod.GET, "/categories", permitAll)
+                authorize(HttpMethod.GET, "/equipment", permitAll)
+                authorize(HttpMethod.GET, "/equipment/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
             oauth2ResourceServer {

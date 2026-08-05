@@ -14,30 +14,30 @@ import jakarta.persistence.Table
 import jakarta.persistence.Version
 
 @Entity
-@Table(name = "equipos")
-class Equipo(
+@Table(name = "equipment")
+class Equipment(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id", nullable = false)
-    var categoria: CategoriaEquipo,
+    @JoinColumn(name = "category_id", nullable = false)
+    var category: EquipmentCategory,
 
     @Column(nullable = false, length = 80)
-    var nombre: String,
+    var name: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    var estado: EstadoEquipo = EstadoEquipo.DISPONIBLE,
+    var status: EquipmentStatus = EquipmentStatus.AVAILABLE,
 
     @Column(length = 255)
-    var descripcion: String? = null,
+    var description: String? = null,
 
-    // Optimistic locking: protege contra dos estudiantes solicitando el mismo
-    // equipo al mismo tiempo. Si dos transacciones leen la misma version y ambas
-    // intentan guardar, la segunda falla con ObjectOptimisticLockingFailureException
-    // (se traduce a 409 Conflict en GlobalExceptionHandler).
+    // Optimistic locking: protects against two students requesting the same
+    // equipment at the same time. If two transactions read the same version and
+    // both try to save, the second one fails with ObjectOptimisticLockingFailureException
+    // (translated to 409 Conflict in GlobalExceptionHandler).
     @Version
     var version: Long? = null
 )
