@@ -86,6 +86,8 @@ Cobertura medida con JaCoCo (excluye configuración, DTOs, entidades y la clase 
 
 Incluye tests unitarios (MockK / Mockito) por servicio, y tests de integración de extremo a extremo (`@SpringBootTest` + `MockMvc`, con Spring Security real y el `JwtDecoder` mockeado) que recorren cada endpoint de ambos microservicios: casos felices, 401 sin token, 403 con rol equivocado o dueño incorrecto, 404, 400 de validación, y 409 de duplicados/conflicto/integridad referencial. Un test de integración encontró un bug real (borrar un equipo o categoría aún referenciados devolvía 500 sin control) que se corrigió como parte de este trabajo — ver `GlobalExceptionHandler.handleDataIntegrityViolation`.
 
+Un equipo (`Equipment`) puede compartir `name`/`description` con otro (varias unidades idénticas de inventario son válidas), pero cada unidad física es distinguible por su `serialNumber`, obligatorio y único: crear un equipo con un `serialNumber` ya existente devuelve 409.
+
 ## Colección de Postman
 
 `SIGPEL.postman_collection.json` (+ `SIGPEL.postman_environment.json`) en la raíz del repo — **pasa por nginx**, no directo a los microservicios (`{{base_url}}` = `http://localhost:9090`, rutas `/users/...` y `/sigpel/...`). Incluye:

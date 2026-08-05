@@ -19,6 +19,7 @@ fun Equipment.toResponse() = EquipmentResponse(
     categoryId = requireNotNull(category.id),
     categoryName = category.name,
     name = name,
+    serialNumber = serialNumber,
     status = status,
     description = description
 )

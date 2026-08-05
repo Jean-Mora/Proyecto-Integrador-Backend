@@ -27,6 +27,14 @@ class Equipment(
     @Column(nullable = false, length = 80)
     var name: String,
 
+    // Identificador fisico de ESTA unidad especifica (a diferencia de "name",
+    // que puede repetirse entre varios items identicos de inventario).
+    // Nullable a nivel de columna solo para que ddl-auto=update pueda agregar
+    // la columna sin romper filas existentes; a nivel de API es obligatorio
+    // (ver EquipmentRequest). Postgres permite varios NULL en una columna unique.
+    @Column(name = "serial_number", unique = true, length = 60)
+    var serialNumber: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     var status: EquipmentStatus = EquipmentStatus.AVAILABLE,

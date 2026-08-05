@@ -106,7 +106,7 @@ class FullFlowIntegrationTest {
         val body = mockMvc.perform(
             post("/equipment").with(staff())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"categoryId":$categoryId,"name":"Flow Test Equipment","description":"integration test"}""")
+                .content("""{"categoryId":$categoryId,"name":"Flow Test Equipment","serialNumber":"FLOW-TEST-001","description":"integration test"}""")
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.status").value("AVAILABLE"))

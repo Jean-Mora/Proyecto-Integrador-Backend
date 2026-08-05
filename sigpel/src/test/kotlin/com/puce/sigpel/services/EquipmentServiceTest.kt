@@ -4,6 +4,7 @@ import com.puce.sigpel.dto.EquipmentRequest
 import com.puce.sigpel.entities.Equipment
 import com.puce.sigpel.entities.EquipmentCategory
 import com.puce.sigpel.entities.EquipmentStatus
+import com.puce.sigpel.exceptions.DuplicateResourceException
 import com.puce.sigpel.exceptions.ResourceNotFoundException
 import com.puce.sigpel.repositories.EquipmentRepository
 import io.mockk.every
@@ -31,12 +32,14 @@ class EquipmentServiceTest {
     fun `create links the equipment to the existing category and defaults to AVAILABLE`() {
         val category = EquipmentCategory(id = 1L, name = "Electronics")
         every { equipmentCategoryService.get(1L) } returns category
+        every { equipmentRepository.existsBySerialNumber(any()) } returns false
         val savedSlot = slot<Equipment>()
         every { equipmentRepository.save(capture(savedSlot)) } answers { savedSlot.captured }
 
-        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Oscilloscope"))
+        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Oscilloscope", serialNumber = "SN-001"))
 
         assertEquals("Oscilloscope", savedSlot.captured.name)
+        assertEquals("SN-001", savedSlot.captured.serialNumber)
         assertEquals(EquipmentStatus.AVAILABLE, savedSlot.captured.status)
         assertEquals(category, savedSlot.captured.category)
     }
@@ -45,12 +48,26 @@ class EquipmentServiceTest {
     fun `create allows multiple equipment items with the same name in the same category`() {
         val category = EquipmentCategory(id = 1L, name = "Electronics")
         every { equipmentCategoryService.get(1L) } returns category
+        every { equipmentRepository.existsBySerialNumber(any()) } returns false
         every { equipmentRepository.save(any()) } answers { firstArg() }
 
-        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Multimeter"))
-        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Multimeter"))
+        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Multimeter", serialNumber = "SN-002"))
+        equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Multimeter", serialNumber = "SN-003"))
 
         verify(exactly = 2) { equipmentRepository.save(any()) }
+    }
+
+    @Test
+    fun `create throws DuplicateResourceException when the serial number already exists`() {
+        val category = EquipmentCategory(id = 1L, name = "Electronics")
+        every { equipmentCategoryService.get(1L) } returns category
+        every { equipmentRepository.existsBySerialNumber("SN-004") } returns true
+
+        assertThrows(DuplicateResourceException::class.java) {
+            equipmentService.create(EquipmentRequest(categoryId = 1L, name = "Multimeter", serialNumber = "SN-004"))
+        }
+
+        verify(exactly = 0) { equipmentRepository.save(any()) }
     }
 
     @Test

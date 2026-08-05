@@ -1039,7 +1039,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"name\": \"Postman Demo Equipment\",\n  \"description\": \"created from Postman\"\n}"
+              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"name\": \"Postman Demo Equipment\",\n  \"serialNumber\": \"PM-DEMO-001\",\n  \"description\": \"created from Postman\"\n}"
             }
           },
           "response": [],
@@ -1055,6 +1055,57 @@
                   "});",
                   "pm.test(\"Save id to {{equipment_id}}\", function () {",
                   "    if (pm.response.code < 300) { const json = pm.response.json(); pm.collectionVariables.set('equipment_id', json.id); }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create equipment with duplicate serial number -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sigpel/equipment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sigpel",
+                "equipment"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"name\": \"Another Postman Demo Equipment\",\n  \"serialNumber\": \"PM-DEMO-001\",\n  \"description\": \"same serial number as the previous request\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
                   "});"
                 ]
               }

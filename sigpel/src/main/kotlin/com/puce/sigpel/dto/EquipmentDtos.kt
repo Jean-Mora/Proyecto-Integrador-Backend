@@ -13,6 +13,12 @@ data class EquipmentRequest(
     @field:Size(max = 80, message = "Name cannot exceed 80 characters")
     val name: String,
 
+    // Identifica la unidad fisica especifica (a diferencia de "name", que
+    // puede repetirse entre varios items identicos de inventario).
+    @field:NotBlank(message = "Serial number is required")
+    @field:Size(max = 60, message = "Serial number cannot exceed 60 characters")
+    val serialNumber: String,
+
     @field:Size(max = 255, message = "Description cannot exceed 255 characters")
     val description: String? = null
 )
@@ -27,6 +33,7 @@ data class EquipmentResponse(
     val categoryId: Long,
     val categoryName: String,
     val name: String,
+    val serialNumber: String?,
     val status: EquipmentStatus,
     val description: String?
 )

@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param
 interface EquipmentRepository : JpaRepository<Equipment, Long> {
     fun findByStatus(status: EquipmentStatus): List<Equipment>
 
+    fun existsBySerialNumber(serialNumber: String): Boolean
+
     // join fetch avoids N+1 when mapping category.name for each equipment item (see toResponse()).
     @Query("select e from Equipment e join fetch e.category")
     fun findAllWithCategory(): List<Equipment>

@@ -98,7 +98,7 @@ class EdgeCasesIntegrationTest {
         val equipmentBody = mockMvc.perform(
             post("/equipment").with(staff())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"categoryId":$categoryId,"name":"Edge Case Equipment"}""")
+                .content("""{"categoryId":$categoryId,"name":"Edge Case Equipment","serialNumber":"EDGE-CASE-001"}""")
         ).andExpect(status().isCreated).andReturn().response.contentAsString
         equipmentId = objectMapper.readTree(equipmentBody)["id"].asLong()
     }
@@ -181,11 +181,23 @@ class EdgeCasesIntegrationTest {
         val freshEquipmentBody = mockMvc.perform(
             post("/equipment").with(staff())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"categoryId":$categoryId,"name":"Disposable Equipment"}""")
+                .content("""{"categoryId":$categoryId,"name":"Disposable Equipment","serialNumber":"EDGE-CASE-002"}""")
         ).andExpect(status().isCreated).andReturn().response.contentAsString
         val freshEquipmentId = objectMapper.readTree(freshEquipmentBody)["id"].asLong()
 
         mockMvc.perform(delete("/equipment/$freshEquipmentId").with(staff()))
             .andExpect(status().isNoContent)
+    }
+
+    @Test
+    @Order(10)
+    fun `creating equipment with a duplicate serial number returns 409`() {
+        val body = """{"categoryId":$categoryId,"name":"Duplicate Serial Equipment A","serialNumber":"EDGE-CASE-DUP-001"}"""
+        mockMvc.perform(post("/equipment").with(staff()).contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isCreated)
+
+        val duplicateBody = """{"categoryId":$categoryId,"name":"Duplicate Serial Equipment B","serialNumber":"EDGE-CASE-DUP-001"}"""
+        mockMvc.perform(post("/equipment").with(staff()).contentType(MediaType.APPLICATION_JSON).content(duplicateBody))
+            .andExpect(status().isConflict)
     }
 }

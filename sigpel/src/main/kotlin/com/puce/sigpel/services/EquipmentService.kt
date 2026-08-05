@@ -4,6 +4,7 @@ import com.puce.sigpel.dto.EquipmentRequest
 import com.puce.sigpel.dto.EquipmentStatusRequest
 import com.puce.sigpel.entities.Equipment
 import com.puce.sigpel.entities.EquipmentStatus
+import com.puce.sigpel.exceptions.DuplicateResourceException
 import com.puce.sigpel.exceptions.ResourceNotFoundException
 import com.puce.sigpel.repositories.EquipmentRepository
 import org.slf4j.LoggerFactory
@@ -37,13 +38,18 @@ class EquipmentService(
 
     fun create(request: EquipmentRequest): Equipment {
         val category = equipmentCategoryService.get(request.categoryId)
+        if (equipmentRepository.existsBySerialNumber(request.serialNumber)) {
+            log.warn("event=equipment.rejected | msg=Duplicate serial number | serialNumber=\"${request.serialNumber}\"")
+            throw DuplicateResourceException("Equipment with serial number '${request.serialNumber}' already exists")
+        }
         val equipment = Equipment(
             category = category,
             name = request.name,
+            serialNumber = request.serialNumber,
             description = request.description
         )
         val saved = equipmentRepository.save(equipment)
-        log.info("event=equipment.created | msg=Equipment created | equipmentId=${saved.id} categoryId=${category.id} name=\"${saved.name}\"")
+        log.info("event=equipment.created | msg=Equipment created | equipmentId=${saved.id} categoryId=${category.id} name=\"${saved.name}\" serialNumber=\"${saved.serialNumber}\"")
         return saved
     }
 
