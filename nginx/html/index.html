@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIGPEL — Proyecto Integrador Arquitectura Empresarial</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #171a21; --line: #262b36;
+    --text: #e6e8ee; --muted: #9aa3b2; --accent: #7aa2f7;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #f6f7f9; --card: #ffffff; --line: #e3e6ec; --text: #1b1f27; --muted: #5c6473; --accent: #2f5fd0; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3rem 1.25rem; background: var(--bg); color: var(--text);
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 42rem; margin: 0 auto; }
+  h1 { font-size: clamp(1.5rem, 4vw, 2.1rem); margin: 0 0 .6rem; }
+  .lead { color: var(--muted); margin: 0 0 2rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem 1.4rem; margin-bottom: 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; }
+  tr:last-child td { border-bottom: 0; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .875em; background: rgba(127,127,127,.14); padding: .12em .4em; border-radius: 5px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SIGPEL — Sistema de Gestión de Préstamos de Equipos de Laboratorio</h1>
+  <p class="lead">Proyecto Integrador, Arquitectura Empresarial. Dos microservicios detrás de este reverse proxy nginx, autenticados con JWT de AWS Cognito.</p>
+
+  <div class="card">
+    <table>
+      <tr><th>Ruta</th><th>Servicio</th><th>Qué hace</th></tr>
+      <tr><td><code>/users</code></td><td>users</td><td>Perfil de usuario asociado al <code>sub</code> de Cognito</td></tr>
+      <tr><td><code>/sigpel</code></td><td>sigpel</td><td>Categorías, equipos, préstamos e incidencias de laboratorio</td></tr>
+    </table>
+    <p style="color:var(--muted);margin:.9rem 0 0;font-size:.9rem">
+      Sin <code>Authorization: Bearer &lt;token&gt;</code> los endpoints protegidos responden <code>401</code>.
+    </p>
+  </div>
+</main>
+</body>
+</html>
