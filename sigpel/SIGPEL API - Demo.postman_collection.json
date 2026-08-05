@@ -1,0 +1,824 @@
+{
+  "info": {
+    "_postman_id": "0d9289ea-acd5-4d42-b8dd-35c1bf89a47e",
+    "name": "SIGPEL API - Demo",
+    "description": "Coleccion de demo para la API de SIGPEL (Sistema de Gestion de Prestamos de Equipos).\n\nAutenticacion: la API valida JWT emitidos por AWS Cognito (Bearer token). Antes de correr los requests protegidos, obten un id_token/access_token de Cognito (con el claim `cognito:groups` = ENCARGADO o ESTUDIANTE) y pegalo en la variable de coleccion `jwt_token`.\n\nEndpoints publicos (no requieren token): GET /categories, GET /equipment, GET /equipment/{id}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54540741",
+    "_collection_link": "https://go.postman.co/collection/54540741-0d9289ea-acd5-4d42-b8dd-35c1bf89a47e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List categories (public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create category (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            },
+            "description": "Devuelve 409 Conflict si ya existe una categoria con el mismo nombre (sin distinguir mayusculas/minusculas)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update category (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptops\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "{{category_id}}"
+              ]
+            },
+            "description": "Devuelve 409 Conflict si el nuevo nombre ya lo tiene otra categoria."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete category (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "{{category_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "item": [
+        {
+          "name": "List equipment (public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/equipment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List equipment by category and status (public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/equipment?categoryId={{category_id}}&status=MAINTENANCE",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment"
+              ],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "{{category_id}}",
+                  "description": "Optional, combinable with status"
+                },
+                {
+                  "key": "status",
+                  "value": "MAINTENANCE",
+                  "description": "AVAILABLE | LOANED | MAINTENANCE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get equipment by id (public)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment",
+                "{{equipment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create equipment (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": {{category_id}},\n  \"name\": \"\",\n  \"description\": \"Classroom projector, includes HDMI cable\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/equipment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment"
+              ]
+            },
+            "description": "Se pueden crear varios equipos con el mismo nombre dentro de la misma categoria (por ejemplo, varias laptops identicas como items de inventario separados)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update equipment status (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"MAINTENANCE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment",
+                "{{equipment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete equipment (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/equipment/{{equipment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "equipment",
+                "{{equipment_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        {
+          "name": "Request loan (ESTUDIANTE)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipmentId\": {{equipment_id}},\n  \"estimatedReturnDate\": \"2026-08-10T17:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/loans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans"
+              ]
+            },
+            "description": "estimatedReturnDate debe ser una fecha futura; si es anterior al momento actual, devuelve 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "My loans (ESTUDIANTE)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/loans/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List all loans (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/loans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change loan status (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"comment\": \"Delivered at warehouse 2\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/loans/{{loan_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans",
+                "{{loan_id}}"
+              ]
+            },
+            "description": "Valores validos para status: PENDING | APPROVED | REJECTED | RETURNED"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel loan (ESTUDIANTE)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_estudiante}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/loans/{{loan_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loans",
+                "{{loan_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "Register incident (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loanId\": {{loan_id}},\n  \"type\": \"DAMAGE\",\n  \"description\": \"Projector screen has stains\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/incidents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidents"
+              ]
+            },
+            "description": "Valores validos para type: DAMAGE | LOSS | DELAY. Un mismo prestamo puede tener varias incidencias registradas."
+          },
+          "response": []
+        },
+        {
+          "name": "Get incident (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidents",
+                "{{incident_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update incident (ENCARGADO)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_encargado}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loanId\": {{loan_id}},\n  \"type\": \"DELAY\",\n  \"description\": \"Delivered 2 days late\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidents",
+                "{{incident_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete incident (ENCARGADO)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/incidents/{{incident_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "incidents",
+                "{{incident_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login ENCARGADO",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set(\"token_encargado\", response.AuthenticationResult.IdToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1",
+                "type": "text"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"3ans0himg191rg5prihuet9eg0\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"jpmoras@puce.edu.ec\",\n    \"PASSWORD\": \"Puce2026!\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://cognito-idp.us-east-1.amazonaws.com/",
+              "protocol": "https",
+              "host": [
+                "cognito-idp",
+                "us-east-1",
+                "amazonaws",
+                "com"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login ESTUDIANTE",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set(\"token_estudiante\", response.AuthenticationResult.IdToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1",
+                "type": "text"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"3ans0himg191rg5prihuet9eg0\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"jestudiante@puce.edu.ec\",\n    \"PASSWORD\": \"Estudiante2026!\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://cognito-idp.us-east-1.amazonaws.com/",
+              "protocol": "https",
+              "host": [
+                "cognito-idp",
+                "us-east-1",
+                "amazonaws",
+                "com"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "tokenName",
+        "value": "Admin",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://54.211.44.223:8080"
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    },
+    {
+      "key": "category_id",
+      "value": "1"
+    },
+    {
+      "key": "equipment_id",
+      "value": "1"
+    },
+    {
+      "key": "loan_id",
+      "value": "1"
+    },
+    {
+      "key": "incident_id",
+      "value": "1"
+    },
+    {
+      "key": "token_estudiante",
+      "value": "eyJraWQiOiJNb3BOazNiQmdleHZIRWQ3WjNLcWM2dmF2SGY1dUxKV08vVkh5QzRyRGVZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1NGY4NzQ0OC1mMDYxLTcwMWYtZDJlYy1iYmY4NTRkYmY3MmYiLCJjb2duaXRvOmdyb3VwcyI6WyJFU1RVRElBTlRFIl0sImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczovL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL3VzLWVhc3QtMV9mSGM0d0EyY0YiLCJjb2duaXRvOnVzZXJuYW1lIjoiNTRmODc0NDgtZjA2MS03MDFmLWQyZWMtYmJmODU0ZGJmNzJmIiwib3JpZ2luX2p0aSI6IjRkYTYwYTE2LTcxMGUtNDQ5Yy1hODY3LTQ0MDJhNTRhYzgzNSIsImF1ZCI6IjNhbnMwaGltZzE5MXJnNXByaWh1ZXQ5ZWcwIiwiZXZlbnRfaWQiOiJlNDY2NDUyYi1iMDdjLTQ2MzctOGZmMS03MWJkYTU4ZWNiOWMiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc4NTI3ODM5NSwiZXhwIjoxNzg1MjgxOTk1LCJpYXQiOjE3ODUyNzgzOTUsImp0aSI6ImRiYTFlM2Q0LTUxZjYtNDgyNC05MDYxLTI5MzIxZmE4N2RmZCIsImVtYWlsIjoiamVzdHVkaWFudGVAcHVjZS5lZHUuZWMifQ.d5Lsy5yc7LFYxGHJakwf-6RhVGFc5y2VMjQs5Dqo5qx-up_KWjT5kC6ZGlWw4DTscwFOrWaQkj6-plcYNIPkIgtbKTtM_bm7Oiax1tNqmS9eYfUmJmXreNG0esKUoTm3LcviLQcuM50BxiXUyTafub1yOSh97nK6umAQw_3kscpS-vqdwF8FMBmXcP1VU4h6fgAkX1JLqjPxpWRdWLNJrFO95Qbln1VjGBPx6RTD8Vn2KUMkuCau4_yvOUGf1w5EMR6Mu8sYz6VG_8AsmdORMUOFu-ZOJ_U1IN5790tBSrVhH8MkpmHizhCgevQVV7DSQh0o2mR-6aG2AKjVX20kTQ"
+    },
+    {
+      "key": "token_encargado",
+      "value": "eyJraWQiOiJNb3BOazNiQmdleHZIRWQ3WjNLcWM2dmF2SGY1dUxKV08vVkh5QzRyRGVZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI3NDk4MjQzOC03MDMxLTcwNzktY2E3ZC05NzU3ZWEwNTdkYjYiLCJjb2duaXRvOmdyb3VwcyI6WyJFTkNBUkdBRE8iXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vdXMtZWFzdC0xX2ZIYzR3QTJjRiIsImNvZ25pdG86dXNlcm5hbWUiOiI3NDk4MjQzOC03MDMxLTcwNzktY2E3ZC05NzU3ZWEwNTdkYjYiLCJvcmlnaW5fanRpIjoiODVlZjk5MzktYmYyZS00NTQwLWEzMmMtYTU1M2I0MzZhMzRmIiwiYXVkIjoiM2FuczBoaW1nMTkxcmc1cHJpaHVldDllZzAiLCJldmVudF9pZCI6IjQ2YjgyYjg1LTU4ZWQtNDdkYi1hODIxLWQyYzc2YTc5YzE1ZiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzg1Mjc5OTE3LCJleHAiOjE3ODUyODM1MTcsImlhdCI6MTc4NTI3OTkxNywianRpIjoiYjMyY2ExNzItNzE2NS00ZWExLWJhYjUtYWQ0YjRlNmU2NTFkIiwiZW1haWwiOiJqcG1vcmFzQHB1Y2UuZWR1LmVjIn0.Z7-3vGQs8ry4Y_W3J_LOWVtDzIazwWsF2_Wa4WTTQGVsL5CfO2cGwpRIjqbLTG7lzCq_CaE1QibF77TLHN9j-yOhd0oRxBBjNeNROX-_PuR4sTFi7JyyJdaZp_O45E_YyLAHqHLGRuehSaOjrut8t5-UnOQNxBJusuUX3wbsMmm6q-2YJ1Bw0gRanjzQr5m6C7CKKvjGtzbDmYjwjZ4Y4U4SHFU3WkKkjWBBLqxtP_aY434LDjdzzd5AVvMxoQ_ciEgXelMCiQopYdKOr9cuKypSRNCN2S4CvvQCE4Dte12Vv9wIVUaioxU1I8iX2NvNv9rfRnPLS-xUnKkNU_AL_w"
+    }
+  ]
+}

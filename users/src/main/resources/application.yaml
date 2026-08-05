@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: users
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:users}
+    username: ${DB_USERNAME:users}
+    password: ${DB_PASSWORD:users}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: true
+
+  # Resource Server: valida el JWT que emite Cognito.
+  # El issuer-uri apunta al User Pool; Spring descarga las llaves publicas (JWKS)
+  # desde ese issuer y verifica la firma de cada token automaticamente.
+  # Mismo AWS_REGION/COGNITO_USER_POOL_ID que el microservicio sigpel: ambos
+  # servicios deben resolver exactamente el mismo issuer.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://cognito-idp.${AWS_REGION:us-east-1}.amazonaws.com/${COGNITO_USER_POOL_ID:}
+
+server:
+  port: 8686
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} | %-5level | ${spring.application.name} | sub=%X{sub:-anonimo} | %logger{40} | %msg%n"
+  level:
+    org.springframework.security: INFO
+    com.pucetec.users: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

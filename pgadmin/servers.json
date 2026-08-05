@@ -1,0 +1,22 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "users-db",
+      "Group": "SIGPEL",
+      "Host": "users-db",
+      "Port": 5432,
+      "MaintenanceDB": "users",
+      "Username": "users",
+      "SSLMode": "prefer"
+    },
+    "2": {
+      "Name": "sigpel-db",
+      "Group": "SIGPEL",
+      "Host": "sigpel-db",
+      "Port": 5432,
+      "MaintenanceDB": "sigpel",
+      "Username": "sigpel",
+      "SSLMode": "prefer"
+    }
+  }
+}
